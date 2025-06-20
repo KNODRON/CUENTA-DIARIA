@@ -1,0 +1,19 @@
+/* Estilos básicos */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0; padding: 0;
+}
+header { text-align: center; margin: 1rem; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid #333;
+  padding: 0.5rem;
+  text-align: center;
+}
+button {
+  margin: 1rem;
+  padding: 0.5rem 1rem;
+}
