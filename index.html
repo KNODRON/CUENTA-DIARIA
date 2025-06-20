@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pase de Lista</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Pase de Lista</h1>
+    <div id="fecha"></div>
+  </header>
+  <main>
+    <table id="asistencia">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th data-label="✔️">✔️</th>
+          <th data-label="❌">❌</th>
+          <th data-label="L">L</th>
+          <th data-label="A">A</th>
+          <th data-label="N">N</th>
+          <th data-label="F">F</th>
+          <th data-label="O">O</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Aquí van las filas dinámicas -->
+      </tbody>
+    </table>
+    <button id="generarReporte">Generar Reporte</button>
+    <button id="enviarWhatsApp">Enviar por WhatsApp</button>
+  </main>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
