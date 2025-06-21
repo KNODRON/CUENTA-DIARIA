@@ -1,10 +1,12 @@
-<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#0ea5e9">
   <title>Pase de Lista</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -17,27 +19,18 @@
       <thead>
         <tr>
           <th>Nombre</th>
-          <th data-label="✔️">✔️</th>
-          <th data-label="❌">❌</th>
-          <th data-label="L">L</th>
-          <th data-label="A">A</th>
-          <th data-label="N">N</th>
-          <th data-label="F">F</th>
-          <th data-label="O">O</th>
+          <th>✔️</th><th>❌</th>
+          <th>L</th><th>A</th><th>N</th><th>F</th><th>O</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Aquí se insertan filas dinámicamente -->
-      </tbody>
+      <tbody></tbody>
     </table>
     <button id="generarReporte">Generar Reporte</button>
     <button id="enviarWhatsApp">Enviar por WhatsApp</button>
   </main>
   <script src="app.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
   </script>
 </body>
 </html>
