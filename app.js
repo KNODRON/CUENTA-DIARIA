@@ -45,13 +45,15 @@ function init() {
 }
 
 function generarReporte() {
-  let texto = `Asistencia ${document.getElementById('fecha').textContent}\n`;
+  let texto = `Asistencia ${document.getElementById('fecha').textContent}
+`;
   document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
     const nombre = tr.cells[0].textContent;
     const seleccion = Array.from(tr.querySelectorAll('input:checked'))
       .map(cb => cb.dataset.label)
       .join(', ');
-    texto += `• ${nombre}: ${seleccion || 'Sin marcar'}\n`;
+    texto += `• ${nombre}: ${seleccion || 'Sin marcar'}
+`;
   });
   return texto;
 }
