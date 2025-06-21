@@ -1,392 +1,117 @@
-// Datos del personal con nombre, sección y rol (PNS/PNI)
+// 1. Define tu personal con sección y rol (PNS o PNI)
 const personal = [
   { nombre: 'Petronila Sinforoza', seccion: 'Analistas', rol: 'PNS' },
-  { nombre: 'Juan Perico',        seccion: 'Analistas', rol: 'PNI' },
-  { nombre: 'Los Palotes',         seccion: 'Analistas', rol: 'PNI' },
-  { nombre: 'Gabriela Albino',     seccion: 'Tecnología Forense', rol: 'PNS' },
-  { nombre: 'Andrea Lara',         seccion: 'Tecnología Forense', rol: 'PNI' },
-  { nombre: 'Agustín Jiménez',     seccion: 'Tecnología Forense', rol: 'PNI' },
-  { nombre: 'Francisca Jiménez',   seccion: 'Monitoreo', rol: 'PNI' },
-  { nombre: 'Juan Jiménez',        seccion: 'Monitoreo', rol: 'PNI' }
+  { nombre: 'Juan Perico',            seccion: 'Analistas', rol: 'PNI' },
+  { nombre: 'Los Palotes',            seccion: 'Analistas', rol: 'PNI' },
+  { nombre: 'Gabriela Albino',        seccion: 'Tecnología Forense', rol: 'PNS' },
+  { nombre: 'Andrea Lara',            seccion: 'Tecnología Forense', rol: 'PNI' },
+  { nombre: 'Agustín Jiménez',        seccion: 'Tecnología Forense', rol: 'PNI' },
+  { nombre: 'Francisca Jiménez',      seccion: 'Monitoreo', rol: 'PNI' },
+  { nombre: 'Juan Jiménez',           seccion: 'Monitoreo', rol: 'PNI' },
 ];
 
-document.addEventListener('DOMContentLoaded', () => {
-  init();
-  document.getElementById('generarReporte')
-    .addEventListener('click', () => alert(generarReporte()));
-  document.getElementById('enviarWhatsApp')
-    .addEventListener('click', () => {
-      const msg = encodeURIComponent(generarReporte());
-      window.open(`https://wa.me/?text=${msg}`, '_blank');
-    });
-});
+// 2. Etiquetas de casillas (en el mismo orden de tu tabla)
+const labels = ['Si','No','Lic.','Ad.','Noche','Franco','Otro'];
 
 function init() {
-  // Mostrar fecha
-  document.getElementById('fecha').textContent = new Date().toLocaleDateString();
+  // 2.1 Mostrar fecha
+  document.getElementById('fecha').textContent =
+    new Date().toLocaleDateString();
 
   const tbody = document.querySelector('#asistencia tbody');
-  let current = '';
+  let currentSection = null;
 
-  personal.forEach(persona => {
-    // Encabezado de sección
-    if (persona.seccion !== current) {
-      current = persona.seccion;
-      const headerRow = document.createElement('tr');
-      const th = document.createElement('th');
-      th.colSpan = 8;
-      th.textContent = current.toUpperCase();
-      th.style.textAlign = 'left';
-      headerRow.appendChild(th);
-      tbody.appendChild(headerRow);
+  // 2.2 Generar filas dinámicamente, con encabezados de sección
+  personal.forEach(person => {
+    if (person.seccion !== currentSection) {
+      currentSection = person.seccion;
+      const secRow = document.createElement('tr');
+      const secCell = document.createElement('th');
+      secCell.textContent = currentSection.toUpperCase();
+      secCell.colSpan = 1 + labels.length; // 1 columna de nombre + un checkbox por label
+      secRow.appendChild(secCell);
+      tbody.appendChild(secRow);
     }
-    // Fila de persona
+
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${persona.nombre}</td>` +
-      ['Si','No','Lic.','Ad.','Noche','Franco','Otro']
-      .map(label =>
-        `<td><input type="checkbox" 
-          data-label="${label}" 
-          data-rol="${persona.rol}" 
-          data-seccion="${persona.seccion}"></td>`
-      ).join('');
-    tbody.appendChild(tr);
+    // Columna del nombre
+    const tdName = document.createElement('td');
+    tdName.textContent = person.nombre;
+    tr.appendChild(tdName);
 
-    // Un solo check permitido por fila
-    const checks = tr.querySelectorAll('input[type="checkbox"]');
-    checks.forEach(cb => cb.addEventListener('change', () => {
-      if (cb.checked) checks.forEach(other => { if (other !== cb) other.checked = false; });
-    }));
-  });
-}
+    // Generar las casillas, ocultando rol y sección en data-attrs
+    labels.forEach(label => {
+      const td = document.createElement('td');
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.dataset.label = label;
+      cb.dataset.seccion = person.seccion;
+      cb.dataset.rol = person.rol;
+      td.appendChild(cb);
+      tr.appendChild(td);
 
-function generarReporte() {
-  const fecha = document.getElementById('fecha').textContent;
-  const conteos = {
-    'Analistas': { PNS: 0, PNI: 0 },
-    'Tecnología Forense': { PNS: 0, PNI: 0 },
-    'Monitoreo': { PNS: 0, PNI: 0 }
-  };
-
-  // Contar solo los que marcaron 'Si'
-  document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
-    const siCheckbox = tr.querySelector('input[data-label="Si"]');
-    if (siCheckbox && siCheckbox.checked) {
-      const sec = siCheckbox.dataset.seccion;
-      const rol = siCheckbox.dataset.rol;
-      conteos[sec][rol]++;
-    }
-  });
-
-  // Formatear mensaje
-  const pad = n => n.toString().padStart(2, '0');
-  let msg = `Buenos días mi coronel, Sección Análisis Criminal: ${fecha}
-`;
-  msg += `• Analistas: ${pad(conteos['Analistas'].PNS)} PNS - ${pad(conteos['Analistas'].PNI)} PNI
-`;
-  msg += `• Tecnología Forense: ${pad(conteos['Tecnología Forense'].PNI)} PNI
-`;
-  msg += `• Monitoreo: ${pad(conteos['Monitoreo'].PNI)} PNI
-`;
-  const totalPNS = conteos['Analistas'].PNS + conteos['Tecnología Forense'].PNS;
-  const totalPNI = conteos['Analistas'].PNI + conteos['Tecnología Forense'].PNI + conteos['Monitoreo'].PNI;
-  msg += `Total: ${pad(totalPNS)} PNS y ${pad(totalPNI)} PNI`;
-  return msg;
-}
-```js
-// Datos: nombre, sección y rol (PNS/PNI) ocultos en UI, pero usados para conteos
-const personal = [
-  { nombre: 'Petronila Sinforoza', seccion: 'Analistas', rol: 'PNS' },
-  { nombre: 'Juan Perico',        seccion: 'Analistas', rol: 'PNI' },
-  { nombre: 'Los Palotes',         seccion: 'Analistas', rol: 'PNI' },
-  { nombre: 'Gabriela Albino',     seccion: 'Tecnología Forense', rol: 'PNS' },
-  { nombre: 'Andrea Lara',         seccion: 'Tecnología Forense', rol: 'PNI' },
-  { nombre: 'Agustín Jiménez',     seccion: 'Tecnología Forense', rol: 'PNI' },
-  { nombre: 'Francisca Jiménez',   seccion: 'Monitoreo', rol: 'PNI' },
-  { nombre: 'Juan Jiménez',        seccion: 'Monitoreo', rol: 'PNI' }
-];
-
-function init() {
-  // Fecha automática
-  document.getElementById('fecha').textContent = new Date().toLocaleDateString();
-
-  const tbody = document.querySelector('#asistencia tbody');
-  let currentSection = '';
-
-  personal.forEach(persona => {
-    // Añadir encabezado de sección
-    if (persona.seccion !== currentSection) {
-      currentSection = persona.seccion;
-      const trh = document.createElement('tr');
-      const th = document.createElement('th');
-      th.colSpan = 8;
-      th.textContent = persona.seccion.toUpperCase();
-      th.style.textAlign = 'left';
-      trh.appendChild(th);
-      tbody.appendChild(trh);
-    }
-
-    // Fila de persona: solo nombre y checkboxes con atributos data
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${persona.nombre}</td>` +
-      ['Si','No','Lic.','Ad.','Noche','Franco','Otro']
-        .map(label =>
-          `<td><input type="checkbox" data-label="${label}" ` +
-          `data-rol="${persona.rol}" data-seccion="${persona.seccion}"></td>`
-        ).join('');
-    tbody.appendChild(tr);
-
-    // Selección única por fila
-    const checks = tr.querySelectorAll('input[type="checkbox"]');
-    checks.forEach(cb => cb.addEventListener('change', () => {
-      if (cb.checked) {
-        checks.forEach(other => { if (other !== cb) other.checked = false; });
-      }
-    }));
-  });
-
-  // Botones
-  document.getElementById('generarReporte')
-    .addEventListener('click', () => alert(generarReporte()));
-
-  document.getElementById('enviarWhatsApp')
-    .addEventListener('click', () => {
-      const mensaje = encodeURIComponent(generarReporte());
-      window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+      // 2.3 Lógica: solo una casilla marcada por fila, toggle al volver a clickear
+      cb.addEventListener('change', () => {
+        if (cb.checked) {
+          tr.querySelectorAll('input[type=checkbox]').forEach(other => {
+            if (other !== cb) other.checked = false;
+          });
+        }
+      });
     });
+
+    tbody.appendChild(tr);
+  });
+
+  // 2.4 Botón enviar a WhatsApp
+  document.getElementById('enviarWhatsApp')
+    .addEventListener('click', enviarWhatsApp);
 }
 
-function generarReporte() {
-  const fecha = document.getElementById('fecha').textContent;
-  const conteos = {
-    'Analistas': { PNS: 0, PNI: 0 },
-    'Tecnología Forense': { PNS: 0, PNI: 0 },
-    'Monitoreo': { PNS: 0, PNI: 0 }
-  };
+function generarResumen() {
+  // Inicializa conteos por sección y rol
+  const resumen = {};
+  personal.forEach(p => {
+    if (!resumen[p.seccion]) {
+      resumen[p.seccion] = { PNS: 0, PNI: 0 };
+    }
+  });
 
-  // Contar solo 'Si'
-  document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
-    const cb = tr.querySelector('input[data-label="Si"]');
-    if (cb && cb.checked) {
-      const seccion = cb.dataset.seccion;
+  // Cuenta solo las casillas "Si" marcadas
+  document
+    .querySelectorAll('input[data-label="Si"]:checked')
+    .forEach(cb => {
+      const sec = cb.dataset.seccion;
       const rol = cb.dataset.rol;
-      conteos[seccion][rol]++;
-    }
-  });
-
-  // Formateo del mensaje
-  let texto = `Buenos días mi coronel, Sección Análisis Criminal: ${fecha}
-`;
-  texto += `• Analistas: ${pad(conteos['Analistas'].PNS)} PNS - ${pad(conteos['Analistas'].PNI)} PNI
-`;
-  texto += `• Tecnología Forense: ${pad(conteos['Tecnología Forense'].PNI)} PNI
-`;
-  texto += `• Monitoreo: ${pad(conteos['Monitoreo'].PNI)} PNI
-`;
-  const totalPNS = conteos['Analistas'].PNS + conteos['Tecnología Forense'].PNS;
-  const totalPNI = conteos['Analistas'].PNI + conteos['Tecnología Forense'].PNI + conteos['Monitoreo'].PNI;
-  texto += `Total: ${pad(totalPNS)} PNS y ${pad(totalPNI)} PNI`;
-  return texto;
-}
-
-function pad(n) { return n.toString().padStart(2, '0'); }
-
-document.addEventListener('DOMContentLoaded', init);
-```js
-// Datos: nombre, sección y rol (PNS/PNI)
-const personal = [
-  { nombre: 'Petronila Sinforoza', seccion: 'Analistas', rol: 'PNS' },
-  { nombre: 'Juan Perico',        seccion: 'Analistas', rol: 'PNI' },
-  { nombre: 'Los Palotes',         seccion: 'Analistas', rol: 'PNI' },
-  { nombre: 'Gabriela Albino',     seccion: 'Tecnología Forense', rol: 'PNS' },
-  { nombre: 'Andrea Lara',         seccion: 'Tecnología Forense', rol: 'PNI' },
-  { nombre: 'Agustín Jiménez',     seccion: 'Tecnología Forense', rol: 'PNI' },
-  { nombre: 'Francisca Jiménez',   seccion: 'Monitoreo', rol: 'PNI' },
-  { nombre: 'Juan Jiménez',        seccion: 'Monitoreo', rol: 'PNI' }
-];
-
-function init() {
-  // Mostrar fecha
-  document.getElementById('fecha').textContent = new Date().toLocaleDateString();
-
-  const tbody = document.querySelector('#asistencia tbody');
-  let currentSection = '';
-
-  personal.forEach(persona => {
-    // Agregar encabezado de sección
-    if (persona.seccion !== currentSection) {
-      currentSection = persona.seccion;
-      const trh = document.createElement('tr');
-      const th = document.createElement('th');
-      th.colSpan = 8;
-      th.textContent = persona.seccion.toUpperCase();
-      th.style.textAlign = 'left';
-      trh.appendChild(th);
-      tbody.appendChild(trh);
-    }
-
-    // Fila individual: solo nombre + casillas (rol oculto, no visible)
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${persona.nombre}</td>` +
-      ['Si','No','Lic.','Ad.','Noche','Franco','Otro']
-        .map(label => `<td><input type="checkbox" data-label="${label}" data-rol="${persona.rol}" data-seccion="${persona.seccion}"></td>`)
-        .join('');
-    tbody.appendChild(tr);
-
-    // Selección única por fila
-    const checks = tr.querySelectorAll('input[type="checkbox"]');
-    checks.forEach(cb => cb.addEventListener('change', () => {
-      if (cb.checked) {
-        checks.forEach(o => { if (o !== cb) o.checked = false; });
-      }
-    }));
-  });
-
-  // Botones
-  document.getElementById('generarReporte')
-    .addEventListener('click', () => alert(generarReporte()));
-
-  document.getElementById('enviarWhatsApp')
-    .addEventListener('click', () => {
-      const mensaje = encodeURIComponent(generarReporte());
-      window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+      resumen[sec][rol]++;
     });
-}
 
-function generarReporte() {
-  const fecha = document.getElementById('fecha').textContent;
-  const conteos = {
-    'Analistas': { PNS: 0, PNI: 0 },
-    'Tecnología Forense': { PNS: 0, PNI: 0 },
-    'Monitoreo': { PNS: 0, PNI: 0 }
-  };
+  // Construye el texto
+  const fecha = new Date().toLocaleDateString();
+  let texto = `Buenos días mi coronel, Sección Análisis Criminal: ${fecha}\n`;
 
-  // Contar solo casillas "Si"
-  document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
-    const cb = tr.querySelector('input[data-label="Si"]');
-    if (cb && cb.checked) {
-      const rol = cb.dataset.rol;
-      const seccion = cb.dataset.seccion;
-      conteos[seccion][rol]++;
-    }
-  });
+  // Por cada sección agrega línea
+  for (const sec of Object.keys(resumen)) {
+    const { PNS, PNI } = resumen[sec];
+    const partes = [];
+    if (PNS) partes.push(String(PNS).padStart(2, '0') + ' PNS');
+    if (PNI) partes.push(String(PNI).padStart(2, '0') + ' PNI');
+    texto += `• ${sec}: ${partes.join(' - ') || '00 PNS'}\n`;
+  }
 
-  // Construir mensaje
-  let texto = `Buenos días mi coronel, Sección Análisis Criminal: ${fecha}
-`;
-  texto += `• Analistas: ${pad(conteos['Analistas'].PNS)} PNS - ${pad(conteos['Analistas'].PNI)} PNI
-`;
-  texto += `• Tecnología Forense: ${pad(conteos['Tecnología Forense'].PNI)} PNI
-`;
-  texto += `• Monitoreo: ${pad(conteos['Monitoreo'].PNI)} PNI
-`;
-  const totalPNS = conteos['Analistas'].PNS + conteos['Tecnología Forense'].PNS;
-  const totalPNI = conteos['Analistas'].PNI + conteos['Tecnología Forense'].PNI + conteos['Monitoreo'].PNI;
-  texto += `Total: ${pad(totalPNS)} PNS y ${pad(totalPNI)} PNI`;
+  // Totales
+  const totalPNS = Object.values(resumen).reduce((sum, v) => sum + v.PNS, 0);
+  const totalPNI = Object.values(resumen).reduce((sum, v) => sum + v.PNI, 0);
+  texto += `Total: ${String(totalPNS).padStart(2, '0')} PNS y PNI ${totalPNI}`;
+
   return texto;
 }
 
-function pad(n) { return n.toString().padStart(2, '0'); }
+function enviarWhatsApp() {
+  const mensaje = encodeURIComponent(generarResumen());
+  window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+}
 
+// 3. Arranca la app cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', init);
-```js
-// Lista con nombre, sección y rol (PNS/PNI)
-const personal = [
-  { nombre: 'Petronila Sinforoza', seccion: 'Analistas', rol: 'PNS' },
-  { nombre: 'Juan Perico',      seccion: 'Analistas', rol: 'PNI' },
-  { nombre: 'Los Palotes',       seccion: 'Analistas', rol: 'PNI' },
-  { nombre: 'Gabriela Albino',   seccion: 'Tecnología Forense', rol: 'PNS' },
-  { nombre: 'Andrea Lara',       seccion: 'Tecnología Forense', rol: 'PNI' },
-  { nombre: 'Agustín Jiménez',   seccion: 'Tecnología Forense', rol: 'PNI' },
-  { nombre: 'Francisca Jiménez', seccion: 'Monitoreo', rol: 'PNI' },
-  { nombre: 'Juan Jiménez',      seccion: 'Monitoreo', rol: 'PNI' }
-];
 
-function init() {
-  // Fecha automática
-  document.getElementById('fecha').textContent = new Date().toLocaleDateString();
-
-  const tbody = document.querySelector('#asistencia tbody');
-  let currentSection = '';
-
-  personal.forEach(persona => {
-    // Insertar encabezado de sección si cambia
-    if (persona.seccion !== currentSection) {
-      currentSection = persona.seccion;
-      const trh = document.createElement('tr');
-      const th = document.createElement('th');
-      th.colSpan = 8;
-      th.textContent = persona.seccion.toUpperCase();
-      th.style.textAlign = 'left';
-      trh.appendChild(th);
-      tbody.appendChild(trh);
-    }
-    // Crear fila de persona
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${persona.nombre}</td>
-      <td>${persona.rol}</td>
-      ${['Si','No','Lic.','Ad.','Noche','Franco','Otro']
-        .map(label => `<td><input type="checkbox" data-label="${label}"></td>`)
-        .join('')}
-    `;
-    tbody.appendChild(tr);
-
-    // Selección única por fila
-    const checks = tr.querySelectorAll('input[type="checkbox"]');
-    checks.forEach(cb => cb.addEventListener('change', () => {
-      if (cb.checked) checks.forEach(o => { if (o !== cb) o.checked = false; });
-    }));
-  });
-
-  document.getElementById('generarReporte')
-    .addEventListener('click', () => alert(generarReporte()));
-
-  document.getElementById('enviarWhatsApp')
-    .addEventListener('click', () => {
-      const mensaje = encodeURIComponent(generarReporte());
-      window.open(`https://wa.me/?text=${mensaje}`, '_blank');
-    });
-}
-
-function generarReporte() {
-  const fecha = document.getElementById('fecha').textContent;
-  // Inicializar conteos por sección y rol
-  const conteos = {
-    'Analistas': { PNS: 0, PNI: 0 },
-    'Tecnología Forense': { PNS: 0, PNI: 0 },
-    'Monitoreo': { PNS: 0, PNI: 0 }
-  };
-
-  // Recorre cada fila de persona
-  document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
-    const cols = tr.children;
-    const nombre = cols[0].textContent;
-    const rol = cols[1].textContent;
-    const sectionRow = personal.find(p => p.nombre === nombre);
-    if (!sectionRow) return;
-    // Si marca "Si", contará esa presencia
-    const cbSi = cols[2].querySelector('input');
-    if (cbSi && cbSi.checked) conteos[sectionRow.seccion][rol]++;
-  });
-
-  // Construir texto
-  let texto = `Buenos días mi coronel, Sección Análisis Criminal: ${fecha}
-`;
-  texto += `• Analistas: ${pad(conteos['Analistas'].PNS)} PNS - ${pad(conteos['Analistas'].PNI)} PNI
-`;
-  texto += `• Tecnología Forense: ${pad(conteos['Tecnología Forense'].PNI)} PNI
-`;
-  texto += `• Monitoreo: ${pad(conteos['Monitoreo'].PNI)} PNI
-`;
-  const totalPNS = conteos['Analistas'].PNS + conteos['Tecnología Forense'].PNS;
-  const totalPNI = conteos['Analistas'].PNI + conteos['Tecnología Forense'].PNI + conteos['Monitoreo'].PNI;
-  texto += `Total: ${pad(totalPNS)} PNS y ${pad(totalPNI)} PNI`;
-  return texto;
-}
-
-function pad(n) {
-  return n.toString().padStart(2, '0');
-}
-
-document.addEventListener('DOMContentLoaded', init);
