@@ -1,9 +1,61 @@
+/* Tema neon sobrio y responsive */
 body {
   font-family: Arial, sans-serif;
+  background: #121212;
+  color: #e0f7fa;
   margin: 0;
   padding: 0;
-  background: #e8f0e8;
 }
+header {
+  text-align: center;
+  margin: 1rem;
+}
+#fecha {
+  font-size: 0.9rem;
+  color: #80deea;
+}
+table {
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  border-collapse: collapse;
+}
+th, td {
+  border: 2px solid #00e5ff;
+  padding: 0.75rem;
+  text-align: center;
+}
+th {
+  background: rgba(0, 229, 255, 0.1);
+  color: #b2ebf2;
+}
+td {
+  background: rgba(255, 255, 255, 0.05);
+}
+input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+button {
+  margin: 1rem 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: #00e5ff;
+  border: 2px solid #00e5ff;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+button:hover {
+  background: rgba(0, 229, 255, 0.1);
+}
+
+/* Responsive: adapta en móviles */
+@media (max-width: 600px) {
+  th, td { padding: 0.5rem; font-size: 0.8rem; }
+  button { padding: 0.5rem 1rem; font-size: 0.9rem; }
+}
+```css
 body { font-family: Arial, sans-serif; background:#e8f0e8; margin:0; padding:0; }
 header { text-align:center; margin:1rem; }
 table { width:100%; border-collapse:collapse; }
