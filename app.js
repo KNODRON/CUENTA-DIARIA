@@ -1,11 +1,13 @@
-// Nombres del personal
+// Lista con nombre, sección y rol (PNS/PNI)
 const personal = [
-  'Juan Perico Los Palotes',
-  'Petronila Sinforoza',
-  'Gabriela Albino',
-  'Agustín Jiménez',
-  'Francisca Jiménez',
-  'Juan Jiménez'
+  { nombre: 'Petronila Sinforoza', seccion: 'Analistas', rol: 'PNS' },
+  { nombre: 'Juan Perico',      seccion: 'Analistas', rol: 'PNI' },
+  { nombre: 'Los Palotes',       seccion: 'Analistas', rol: 'PNI' },
+  { nombre: 'Gabriela Albino',   seccion: 'Tecnología Forense', rol: 'PNS' },
+  { nombre: 'Andrea Lara',       seccion: 'Tecnología Forense', rol: 'PNI' },
+  { nombre: 'Agustín Jiménez',   seccion: 'Tecnología Forense', rol: 'PNI' },
+  { nombre: 'Francisca Jiménez', seccion: 'Monitoreo', rol: 'PNI' },
+  { nombre: 'Juan Jiménez',      seccion: 'Monitoreo', rol: 'PNI' }
 ];
 
 function init() {
@@ -13,23 +15,36 @@ function init() {
   document.getElementById('fecha').textContent = new Date().toLocaleDateString();
 
   const tbody = document.querySelector('#asistencia tbody');
-  personal.forEach(nombre => {
+  let currentSection = '';
+
+  personal.forEach(persona => {
+    // Insertar encabezado de sección si cambia
+    if (persona.seccion !== currentSection) {
+      currentSection = persona.seccion;
+      const trh = document.createElement('tr');
+      const th = document.createElement('th');
+      th.colSpan = 8;
+      th.textContent = persona.seccion.toUpperCase();
+      th.style.textAlign = 'left';
+      trh.appendChild(th);
+      tbody.appendChild(trh);
+    }
+    // Crear fila de persona
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${nombre}</td>` +
-      ['Si','No','Lic.','Ad.','Noche','Franco','Otro']
+    tr.innerHTML = `
+      <td>${persona.nombre}</td>
+      <td>${persona.rol}</td>
+      ${['Si','No','Lic.','Ad.','Noche','Franco','Otro']
         .map(label => `<td><input type="checkbox" data-label="${label}"></td>`)
-        .join('');
+        .join('')}
+    `;
     tbody.appendChild(tr);
 
-    // Selección única y toggle
+    // Selección única por fila
     const checks = tr.querySelectorAll('input[type="checkbox"]');
-    checks.forEach(cb => {
-      cb.addEventListener('change', () => {
-        if (cb.checked) {
-          checks.forEach(other => { if (other !== cb) other.checked = false; });
-        }
-      });
-    });
+    checks.forEach(cb => cb.addEventListener('change', () => {
+      if (cb.checked) checks.forEach(o => { if (o !== cb) o.checked = false; });
+    }));
   });
 
   document.getElementById('generarReporte')
@@ -37,20 +52,49 @@ function init() {
 
   document.getElementById('enviarWhatsApp')
     .addEventListener('click', () => {
-      const msg = encodeURIComponent(generarReporte());
-      window.open(`https://wa.me/?text=${msg}`, '_blank');
+      const mensaje = encodeURIComponent(generarReporte());
+      window.open(`https://wa.me/?text=${mensaje}`, '_blank');
     });
 }
 
 function generarReporte() {
-  let texto = `Sección Análisis Criminal — ${document.getElementById('fecha').textContent}\n`;
+  const fecha = document.getElementById('fecha').textContent;
+  // Inicializar conteos por sección y rol
+  const conteos = {
+    'Analistas': { PNS: 0, PNI: 0 },
+    'Tecnología Forense': { PNS: 0, PNI: 0 },
+    'Monitoreo': { PNS: 0, PNI: 0 }
+  };
+
+  // Recorre cada fila de persona
   document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
-    const nombre = tr.cells[0].textContent;
-    const sel = Array.from(tr.querySelectorAll('input:checked'))
-                 .map(cb => cb.dataset.label).join(', ');
-    texto += `• ${nombre}: ${sel || 'Sin marcar'}\n`;
+    const cols = tr.children;
+    const nombre = cols[0].textContent;
+    const rol = cols[1].textContent;
+    const sectionRow = personal.find(p => p.nombre === nombre);
+    if (!sectionRow) return;
+    // Si marca "Si", contará esa presencia
+    const cbSi = cols[2].querySelector('input');
+    if (cbSi && cbSi.checked) conteos[sectionRow.seccion][rol]++;
   });
+
+  // Construir texto
+  let texto = `Buenos días mi coronel, Sección Análisis Criminal: ${fecha}
+`;
+  texto += `• Analistas: ${pad(conteos['Analistas'].PNS)} PNS - ${pad(conteos['Analistas'].PNI)} PNI
+`;
+  texto += `• Tecnología Forense: ${pad(conteos['Tecnología Forense'].PNI)} PNI
+`;
+  texto += `• Monitoreo: ${pad(conteos['Monitoreo'].PNI)} PNI
+`;
+  const totalPNS = conteos['Analistas'].PNS + conteos['Tecnología Forense'].PNS;
+  const totalPNI = conteos['Analistas'].PNI + conteos['Tecnología Forense'].PNI + conteos['Monitoreo'].PNI;
+  texto += `Total: ${pad(totalPNS)} PNS y ${pad(totalPNI)} PNI`;
   return texto;
+}
+
+function pad(n) {
+  return n.toString().padStart(2, '0');
 }
 
 document.addEventListener('DOMContentLoaded', init);
