@@ -14,7 +14,7 @@ const personal = [
   { nombre: 'S2 Pardo A',           seccion: 'Analistas', rol: 'PNI' },
   { nombre: 'S2 San Juan V',           seccion: 'Analistas', rol: 'PNI' },
   { nombre: 'C1 Olivares G',           seccion: 'Analistas', rol: 'PNI' },
-   { nombre: 'S2 Correa I',           seccion: 'Tegnologia Forense', rol: 'PNI' },
+  { nombre: 'S2 Correa I',           seccion: 'Tegnologia Forense', rol: 'PNI' },
   { nombre: 'S2 Chavez S',           seccion: 'Tegnologia Forense', rol: 'PNI' },
   { nombre: 'S2 Otarola M',           seccion: 'Tegnologia Forense', rol: 'PNI' },
   { nombre: 'C1 Perez B',           seccion: 'Tegnologia Forense', rol: 'PNI' },
