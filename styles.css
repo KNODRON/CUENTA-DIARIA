@@ -48,3 +48,54 @@ button:hover {
   th, td { padding: 0.4rem; font-size: 0.85rem; }
   button { padding: 0.5rem 1rem; font-size: 0.9rem; }
 }
+```css
+/* Tema neón sobrio y responsive */
+body {
+  margin: 0;
+  padding: 0;
+  background: #121212;
+  color: #e0f7fa;
+  font-family: Arial, sans-serif;
+}
+header { text-align: center; margin: 1rem; }
+#fecha { color: #80deea; font-size: 0.9rem; }
+table {
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  border-collapse: collapse;
+}
+th, td {
+  border: 2px solid #00e5ff;
+  padding: 0.6rem;
+  text-align: center;
+}
+th {
+  background: rgba(0,229,255,0.1);
+  color: #b2ebf2;
+}
+td {
+  background: rgba(255,255,255,0.05);
+}
+input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+button {
+  margin: 1rem 0.5rem;
+  padding: 0.7rem 1.3rem;
+  border: 2px solid #00e5ff;
+  background: transparent;
+  color: #00e5ff;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+button:hover {
+  background: rgba(0,229,255,0.1);
+}
+
+@media (max-width: 600px) {
+  th, td { padding: 0.4rem; font-size: 0.85rem; }
+  button { padding: 0.5rem 1rem; font-size: 0.9rem; }
+}
