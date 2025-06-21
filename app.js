@@ -18,7 +18,7 @@ function init() {
   personal.forEach(nombre => {
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${nombre}</td>` +
-      ['✔️','❌','L','A','N','F','O']
+      ['Si','No','Lic.','Ad.','Noche','Franco','Otro']
         .map(label => `<td><input type="checkbox" data-label="${label}"></td>`)
         .join('');
     tbody.appendChild(tr);
