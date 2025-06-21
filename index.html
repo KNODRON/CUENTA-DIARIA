@@ -4,6 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0ea5e9">
+  <title>SECCIÓN ANÁLISIS CRIMINAL</title>
+
+  <!-- PWA manifest & iconos -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>SECCIÓN ANÁLISIS CRIMINAL</h1>
+    <div id="fecha"></div>
+  </header>
+  <main>
+    <table id="asistencia">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>✔️ Si</th>
+          <th>No</th>
+          <th>Lic.</th>
+          <th>Ad.</th>
+          <th>Noche</th>
+          <th>Franco</th>
+          <th>Otro</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button id="generarReporte">Reporte</button>
+    <button id="enviarWhatsApp">Enviar al WhatsApp</button>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
+</body>
+</html>
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0ea5e9">
   <title>Sección Análisis Criminal</title>
 
   <!-- PWA manifest & iconos -->
