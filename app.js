@@ -10,54 +10,48 @@ const personal = [
 ];
 
 function init() {
+  // Mostrar fecha
   document.getElementById('fecha').textContent = new Date().toLocaleDateString();
+
   const tbody = document.querySelector('#asistencia tbody');
 
   personal.forEach(nombre => {
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${nombre}</td>` +
       ['✔️','❌','L','A','N','F','O']
-        .map(l => `<td><input type="checkbox" data-label="${l}"></td>`)
+        .map(label => `<td><input type="checkbox" data-label="${label}"></td>`)
         .join('');
     tbody.appendChild(tr);
 
-    // Asegura selección exclusiva por fila y permite desmarcar
+    // Selección exclusiva por fila y toggle
     const checks = tr.querySelectorAll('input[type="checkbox"]');
     checks.forEach(cb => {
-      // Usamos 'change' para detectar cambios de estado en cualquier dispositivo
       cb.addEventListener('change', () => {
         if (cb.checked) {
-          // Desmarca los demás si este quedó marcado
-          checks.forEach(other => {
-            if (other !== cb) other.checked = false;
-          });
+          checks.forEach(other => { if (other !== cb) other.checked = false; });
         }
-        // Si se desmarca (cb.checked es false), no hacemos nada más
-      });
-    });
-        }
-        // Si está unchecked, se quita sin marcar otros
       });
     });
   });
 
   document.getElementById('generarReporte')
     .addEventListener('click', () => alert(generarReporte()));
+
   document.getElementById('enviarWhatsApp')
-    .addEventListener('click', () => window.open(
-      `https://wa.me/?text=${encodeURIComponent(generarReporte())}`
-    ));
+    .addEventListener('click', () => {
+      const msg = encodeURIComponent(generarReporte());
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    });
 }
 
 function generarReporte() {
-  let texto = `Asistencia ${document.getElementById('fecha').textContent}
-`;
+  let texto = `Asistencia ${document.getElementById('fecha').textContent}\n`;
   document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
     const nombre = tr.cells[0].textContent;
-    const marcas = Array.from(tr.querySelectorAll('input:checked'))
-      .map(cb => cb.getAttribute('data-label')).join(', ');
-    texto += `${nombre}: ${marcas || 'Sin marcar'}
-`;
+    const seleccion = Array.from(tr.querySelectorAll('input:checked'))
+      .map(cb => cb.dataset.label)
+      .join(', ');
+    texto += `• ${nombre}: ${seleccion || 'Sin marcar'}\n`;
   });
   return texto;
 }
