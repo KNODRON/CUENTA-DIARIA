@@ -1,13 +1,29 @@
+### 2.4 `manifest.json`
+```json
 {
-  "name":"SECCION ANALISIS CRIMINAL",
-  "short_name":"Sección Analisis Criminal",
-  "start_url":".",
-  "display":"standalone",
-  "background_color":"#ffffff",
-  "theme_color":"#0ea5e9",
-  "icons":[
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
+  "name": "SECCION ANALISIS CRIMINAL",
+  "short_name": "Sección Analisis Criminal",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
   ],
-  "scope":"./"
+  "scope": "./"
+}
+```json
+{
+  "name": "Pase de Lista",
+  "short_name": "Asistencia",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0ea5e9",
+  "background_color": "#ffffff",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "scope": "./"
 }
