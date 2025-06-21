@@ -1,7 +1,11 @@
 // Array con los nombres del personal
 const personal = [
-  'Pedro Aliaga Muñoz',
-  'Jorge Padilla Pérez',
+  'Juan Perico Los Palotes',
+  'Petronila Sinforoza',
+  'Gabriela Albino',
+  'Agustín Jiménez',
+  'Francisca Jiménez',
+  'Juan Jiménez',
   // ... agrega los demás
 ];
 
