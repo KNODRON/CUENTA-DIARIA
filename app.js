@@ -24,11 +24,17 @@ function init() {
     // Asegura selección exclusiva por fila y permite desmarcar
     const checks = tr.querySelectorAll('input[type="checkbox"]');
     checks.forEach(cb => {
-      cb.addEventListener('click', () => {
+      // Usamos 'change' para detectar cambios de estado en cualquier dispositivo
+      cb.addEventListener('change', () => {
         if (cb.checked) {
+          // Desmarca los demás si este quedó marcado
           checks.forEach(other => {
             if (other !== cb) other.checked = false;
           });
+        }
+        // Si se desmarca (cb.checked es false), no hacemos nada más
+      });
+    });
         }
         // Si está unchecked, se quita sin marcar otros
       });
