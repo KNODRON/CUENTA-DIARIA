@@ -67,3 +67,8 @@ button:hover {
 #asistencia thead th {
   box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
+/* Alinear solo el botón de WhatsApp a la derecha */
+#enviarWhatsApp {
+  display: block;           /* Para que margin auto funcione */
+  margin: 1rem 1rem 1rem auto; /* top right bottom left */
+}
