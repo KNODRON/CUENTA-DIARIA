@@ -1,82 +1,122 @@
-/* TEMA VERDE + BLANCO + AZUL sobre tu CSS existente */
+/* ────────── Variables de color ────────── */
+:root {
+  --bg: #4caf50;            /* verde de fondo */
+  --text: #ffffff;          /* texto blanco */
+  --header-bg: rgba(255,255,255,0.2);
+  --row-alt: rgba(255,255,255,0.1);
+  --accent: #1976d2;        /* azul tiqueado */
+  --shadow: rgba(0,0,0,0.2);
+}
 
-/* 1. Fondo general y texto */
+/* ────────── Reset y body ────────── */
+* {
+  box-sizing: border-box;
+}
 body {
-  background: #4caf50;      /* verde de fondo */
-  color: #ffffff;           /* texto blanco */
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  line-height: 1.4;
 }
 
-/* 2. Cabecera y fecha */
-header h1,
+/* ────────── Contenedor principal ────────── */
+main {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  position: relative;
+}
+
+/* ────────── Título y fecha ────────── */
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
 #fecha {
-  color: #ffffff;           /* mantén el texto de cabecera en blanco */
+  margin-top: .25rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.8);
 }
 
-/* 3. Tabla */
+/* ────────── Tarjeta de la tabla ────────── */
+.scrollable {
+  max-height: calc(100vh - 10rem);
+  overflow-y: auto;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--shadow);
+  padding: 1rem;
+}
+
+/* ────────── Tabla elegante ────────── */
 table {
-  border-collapse: collapse;
-}
-th, td {
-  border: 2px solid #ffffff;        /* líneas blancas */
-  padding: 0.6rem;
-  text-align: center;
-  background: transparent;          /* transparente para dejar ver el verde */
-  color: #ffffff;                   /* contenido en blanco */
-}
-th {
-  background: rgba(255,255,255,0.1); /* ligero traslúcido blanco */
-}
-#asistencia {
   width: 100%;
-  max-width: 800px;
-  margin: auto;
+  border-collapse: collapse;
+  border-radius: 4px;
+  overflow: hidden; /* para clips de border-radius en thead */
 }
 
-/* 4. Casillas (checkbox) */
+thead {
+  background: var(--header-bg);
+}
+thead th {
+  padding: 0.75rem 1rem;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 6rem;               /* ajusta según altura de header */
+  z-index: 5;
+}
+
+tbody tr {
+  transition: background 0.2s;
+}
+tbody tr:nth-child(even) {
+  background: var(--row-alt);
+}
+tbody tr:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+th, td {
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding: 0.6rem 1rem;
+  text-align: center;
+}
+th:first-child, td:first-child {
+  text-align: left;
+}
+
+/* ────────── Casillas azul/blanco ────────── */
 input[type="checkbox"] {
   width: 1.2rem;
   height: 1.2rem;
-  accent-color: #1976d2;     /* tiqueado azul */
-  background-color: #ffffff; /* fondo blanco */
+  accent-color: var(--accent);
+  background-color: #fff;
+  border-radius: 3px;
 }
 
-/* 5. Botones */
-button {
-  margin: 1rem 0.5rem;
-  padding: 0.7rem 1.3rem;
-  border: 2px solid #ffffff;       /* borde blanco */
-  background: transparent;
-  color: #ffffff;                  /* texto blanco */
-  border-radius: 0.3rem;
-  cursor: pointer;
-  transition: background 0.3s;
+/* ────────── Botón WhatsApp a la derecha ────────── */
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
 }
-button:hover {
-  background: rgba(255,255,255,0.2); /* hover suave */
-}
-
-/* 6. Responsive pequeña pantalla */
-@media (max-width: 600px) {
-  th, td { padding: 0.4rem; font-size: 0.85rem; }
-  button { padding: 0.5rem 1rem; font-size: 0.9rem; }
-}
-
-/* 7. Scrollable + sticky headers (sin cambios) */
-.scrollable {
-  max-height: calc(100vh - 6rem);
-  overflow-y: auto;
-}
-#asistencia thead th {
-  position: sticky;
-  top: 4rem;
-  background: #4caf50;  /* mismo verde de fondo */
-  z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-/* 8. Botón WhatsApp a la derecha */
-main { position: relative; }
 #enviarWhatsApp {
-  float: right !important;
-  margin: 1rem !important;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px var(--shadow);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+#enviarWhatsApp:hover {
+  background: #1565c0;
+  transform: translateY(-2px);
 }
