@@ -1,13 +1,14 @@
 :root {
-  --bg: #4caf50;
-  --text: #ffffff;
-  --header-bg: rgba(255,255,255,0.2);
-  --row-alt: rgba(255,255,255,0.1);
-  --accent: #1976d2;
-  --shadow: rgba(0,0,0,0.2);
+  --bg: #4caf50;                   /* verde fondo */
+  --text: #ffffff;                 /* texto blanco */
+  --header-bg: rgba(255,255,255,0.2);        /* header normal */
+  --header-sticky-bg: rgba(0,0,0,0.3);       /* header sticky más oscuro */
+  --row-alt: rgba(255,255,255,0.1);          /* filas alternas */
+  --accent: #1976d2;               /* azul casillas */
+  --shadow: rgba(0,0,0,0.2);       /* sombra */
 }
 
-/* Reset y Body */
+/* Reset & Body */
 * { box-sizing: border-box; margin:0; padding:0; }
 body {
   background: var(--bg);
@@ -21,7 +22,11 @@ header {
   text-align: center;
   padding: 1.5rem 1rem 0.5rem;
 }
-header h1 { font-size: 1.8rem; letter-spacing: 1px; margin-bottom: 0.25rem; }
+header h1 {
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+}
 #fecha {
   font-size: 0.85rem;
   color: rgba(255,255,255,0.8);
@@ -31,7 +36,7 @@ header h1 { font-size: 1.8rem; letter-spacing: 1px; margin-bottom: 0.25rem; }
 /* Contenedor scrollable (solo vertical) */
 .scrollable {
   position: relative;
-  max-height: calc(100vh - 7.5rem); /* ajusta si cambian header/botón */
+  max-height: calc(100vh - 7.5rem); /* ajustar si cambian header/botón */
   overflow-y: auto;
   overflow-x: hidden;
   margin: 0 0.5rem 1rem;
@@ -49,18 +54,19 @@ header h1 { font-size: 1.8rem; letter-spacing: 1px; margin-bottom: 0.25rem; }
 #asistencia thead th {
   position: sticky;
   top: 0;
-  background: var(--header-bg);
-  padding: 0.25rem 0.35rem;
+  background: var(--header-sticky-bg);
+  color: #fff;
+  padding: 0.2rem 0.3rem;
   font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
-  z-index: 5;
+  letter-spacing: 0.3px;
+  z-index: 10;
   border-bottom: 1px solid rgba(255,255,255,0.3);
 }
 #asistencia th,
 #asistencia td {
-  padding: 0.2rem 0.3rem;
-  font-size: 0.75rem;
+  padding: 0.15rem 0.25rem;
+  font-size: 0.7rem;
   white-space: normal;
   word-break: break-word;
   border-bottom: 1px solid rgba(255,255,255,0.3);
@@ -78,9 +84,9 @@ header h1 { font-size: 1.8rem; letter-spacing: 1px; margin-bottom: 0.25rem; }
 
 /* Casillas ultra-compactas */
 input[type="checkbox"] {
-  width: 0.8rem;
-  height: 0.8rem;
-  margin: 0 0.15rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin: 0 0.1rem;
   accent-color: var(--accent);
   background-color: #fff;
   border-radius: 2px;
@@ -106,4 +112,18 @@ input[type="checkbox"] {
 #enviarWhatsApp:hover {
   background: #1565c0;
   transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  #asistencia thead th,
+  #asistencia th,
+  #asistencia td {
+    padding: 0.1rem 0.2rem;
+    font-size: 0.65rem;
+  }
+  #enviarWhatsApp {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
 }
