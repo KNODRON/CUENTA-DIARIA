@@ -35,20 +35,19 @@ header {
 header h1 {
   font-size: 2rem;
   letter-spacing: 1px;
-  margin-bottom: 0.25rem;
 }
 #fecha {
+  margin-top: 0.25rem;
   font-size: 0.9rem;
   color: rgba(255,255,255,0.8);
 }
 
 /*────────────────────────────────────────
-  CONTENEDOR SCROLLABLE (sólo vertical)
+  CONTENEDOR SCROLLABLE
 ────────────────────────────────────────*/
 .scrollable {
-  max-height: calc(100vh - 8rem); /* ajusta según tu header+botón */
+  max-height: calc(100vh - 10rem); /* ajusta según tu header+botón */
   overflow-y: auto;
-  overflow-x: hidden;
   margin: 0 1rem;
   background: rgba(255,255,255,0.05);
   border-radius: 8px;
@@ -57,11 +56,10 @@ header h1 {
 }
 
 /*────────────────────────────────────────
-  TABLA AJUSTADA PARA MÓVIL
+  TABLA ELEGANTE
 ────────────────────────────────────────*/
-#asistencia {
+table {
   width: 100%;
-  table-layout: fixed;
   border-collapse: collapse;
   border-radius: 4px;
   overflow: hidden;
@@ -70,13 +68,17 @@ thead {
   background: var(--header-bg);
 }
 thead th {
-  padding: 0.3rem 0.4rem;
-  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   position: sticky;
-  top: 3rem;  /* ajusta hasta quedar justo bajo tu fecha */
+  top: calc(1.5rem + 1rem + 0.9rem + 1rem); 
+  /* 1.5rem header padding + 1rem header bottom + 0.9rem fecha + 1rem scrollable padding */
   z-index: 5;
+}
+tbody tr {
+  transition: background 0.2s;
 }
 tbody tr:nth-child(even) {
   background: var(--row-alt);
@@ -86,26 +88,19 @@ tbody tr:hover {
 }
 th, td {
   border-bottom: 1px solid rgba(255,255,255,0.3);
-  padding: 0.3rem 0.4rem;
-  font-size: 0.85rem;
-  white-space: normal;
-  word-break: break-word;
+  padding: 0.6rem 1rem;
 }
 th:first-child,
 td:first-child {
   text-align: left;
 }
-tbody tr {
-  line-height: 1.2;
-}
 
 /*────────────────────────────────────────
-  CASILLAS COMPACTAS
+  CASILLAS AZUL/BLANCO
 ────────────────────────────────────────*/
 input[type="checkbox"] {
-  width: 1rem;
-  height: 1rem;
-  margin: 0;
+  width: 1.2rem;
+  height: 1.2rem;
   accent-color: var(--accent);
   background-color: #fff;
   border-radius: 3px;
@@ -120,7 +115,7 @@ input[type="checkbox"] {
   margin: 1rem;
 }
 #enviarWhatsApp {
-  padding: 0.6rem 1.2rem;
+  padding: 0.75rem 1.5rem;
   background: var(--accent);
   color: #fff;
   border: none;
@@ -135,18 +130,15 @@ input[type="checkbox"] {
 }
 
 /*────────────────────────────────────────
-  RESPONSIVE REAJUSTES
+  RESPONSIVE
 ────────────────────────────────────────*/
 @media (max-width: 600px) {
-  .scrollable {
-    max-height: calc(100vh - 7.5rem);
-  }
   thead th, th, td {
-    padding: 0.25rem 0.3rem;
-    font-size: 0.8rem;
+    padding: 0.5rem;
+    font-size: 0.85rem;
   }
   #enviarWhatsApp {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
   }
 }
