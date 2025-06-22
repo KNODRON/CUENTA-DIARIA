@@ -142,3 +142,30 @@ input[type="checkbox"] {
     font-size: 0.9rem;
   }
 }
+/* ─── Evitar scroll horizontal ─── */
+.scrollable {
+  overflow-y: auto;    /* sólo scroll vertical */
+  overflow-x: hidden;  /* nada de scroll horizontal */
+}
+
+/* ─── Forzar que la tabla se adapte al ancho ─── */
+#asistencia {
+  width: 100%;
+  table-layout: fixed; /* distribuye las columnas equitativamente */
+}
+
+/* ─── Que el contenido no desborde ─── */
+#asistencia th,
+#asistencia td {
+  white-space: nowrap;      /* evita que se parta el texto en varias líneas */
+  overflow: hidden;         /* esconde lo que sobra */
+  text-overflow: ellipsis;  /* opcional: muestra “…” si no cabe */
+}
+
+/* ─── Sticky header (ya lo tenías, pero por si acaso) ─── */
+#asistencia thead th {
+  position: sticky;
+  top: calc(1.5rem + 0.25rem + 0.9rem + 1rem);
+  background: var(--header-bg);
+  z-index: 5;
+}
