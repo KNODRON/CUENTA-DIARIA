@@ -1,77 +1,82 @@
-/* ────────── Variables de color ────────── */
+/*────────────────────────────────────────
+  VARIABLES DE COLOR
+────────────────────────────────────────*/
 :root {
   --bg: #4caf50;            /* verde de fondo */
   --text: #ffffff;          /* texto blanco */
   --header-bg: rgba(255,255,255,0.2);
   --row-alt: rgba(255,255,255,0.1);
-  --accent: #1976d2;        /* azul tiqueado */
+  --accent: #1976d2;        /* azul de tiqueado */
   --shadow: rgba(0,0,0,0.2);
 }
 
-/* ────────── Reset y body ────────── */
+/*────────────────────────────────────────
+  RESET & BODY
+────────────────────────────────────────*/
 * {
   box-sizing: border-box;
-}
-body {
   margin: 0;
   padding: 0;
+}
+body {
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, sans-serif;
   line-height: 1.4;
 }
 
-/* ────────── Contenedor principal ────────── */
-main {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  position: relative;
+/*────────────────────────────────────────
+  HEADER Y FECHA
+────────────────────────────────────────*/
+header {
+  text-align: center;
+  padding: 1.5rem 1rem 0.5rem;
 }
-
-/* ────────── Título y fecha ────────── */
 header h1 {
-  margin: 0;
   font-size: 2rem;
   letter-spacing: 1px;
 }
 #fecha {
-  margin-top: .25rem;
+  margin-top: 0.25rem;
   font-size: 0.9rem;
   color: rgba(255,255,255,0.8);
 }
 
-/* ────────── Tarjeta de la tabla ────────── */
+/*────────────────────────────────────────
+  CONTENEDOR SCROLLABLE
+────────────────────────────────────────*/
 .scrollable {
-  max-height: calc(100vh - 10rem);
+  max-height: calc(100vh - 10rem); /* ajusta según tu header+botón */
   overflow-y: auto;
+  margin: 0 1rem;
   background: rgba(255,255,255,0.05);
   border-radius: 8px;
   box-shadow: 0 4px 12px var(--shadow);
-  padding: 1rem;
+  padding: 1rem 0 0;
 }
 
-/* ────────── Tabla elegante ────────── */
+/*────────────────────────────────────────
+  TABLA ELEGANTE
+────────────────────────────────────────*/
 table {
   width: 100%;
   border-collapse: collapse;
   border-radius: 4px;
-  overflow: hidden; /* para clips de border-radius en thead */
+  overflow: hidden;
 }
-
 thead {
   background: var(--header-bg);
 }
 thead th {
   padding: 0.75rem 1rem;
-  text-transform: uppercase;
   font-size: 0.95rem;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
   position: sticky;
-  top: 6rem;               /* ajusta según altura de header */
+  top: calc(1.5rem + 1rem + 0.9rem + 1rem); 
+  /* 1.5rem header padding + 1rem header bottom + 0.9rem fecha + 1rem scrollable padding */
   z-index: 5;
 }
-
 tbody tr {
   transition: background 0.2s;
 }
@@ -81,17 +86,18 @@ tbody tr:nth-child(even) {
 tbody tr:hover {
   background: rgba(255,255,255,0.15);
 }
-
 th, td {
   border-bottom: 1px solid rgba(255,255,255,0.3);
   padding: 0.6rem 1rem;
-  text-align: center;
 }
-th:first-child, td:first-child {
+th:first-child,
+td:first-child {
   text-align: left;
 }
 
-/* ────────── Casillas azul/blanco ────────── */
+/*────────────────────────────────────────
+  CASILLAS AZUL/BLANCO
+────────────────────────────────────────*/
 input[type="checkbox"] {
   width: 1.2rem;
   height: 1.2rem;
@@ -100,11 +106,13 @@ input[type="checkbox"] {
   border-radius: 3px;
 }
 
-/* ────────── Botón WhatsApp a la derecha ────────── */
+/*────────────────────────────────────────
+  BOTÓN WHATSAPP
+────────────────────────────────────────*/
 .acciones {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1rem;
+  margin: 1rem;
 }
 #enviarWhatsApp {
   padding: 0.75rem 1.5rem;
@@ -119,4 +127,18 @@ input[type="checkbox"] {
 #enviarWhatsApp:hover {
   background: #1565c0;
   transform: translateY(-2px);
+}
+
+/*────────────────────────────────────────
+  RESPONSIVE
+────────────────────────────────────────*/
+@media (max-width: 600px) {
+  thead th, th, td {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+  #enviarWhatsApp {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
 }
