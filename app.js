@@ -24,65 +24,50 @@ const personal = [
   { nombre: 'C1 Pacheco P', seccion: 'Monitoreo', rol: 'PNI' }
 ];
 
-const tbody = document.querySelector("#asistencia tbody");
-const fechaDiv = document.getElementById("fecha");
-
-// Mostrar la fecha actual
-const fechaActual = new Date();
-fechaDiv.textContent = fechaActual.toLocaleDateString("es-CL", {
-  day: "numeric", month: "long", year: "numeric"
-});
-
-// Insertar las filas dinámicamente
-personal.forEach(persona => {
-  const fila = document.createElement("tr");
-
-  const celdaNombre = document.createElement("td");
-  celdaNombre.textContent = persona.nombre;
-  fila.appendChild(celdaNombre);
-
-  const columnas = ['si', 'noche', 'franco', 'ad', 'lic', 'otro'];
-
-  columnas.forEach(col => {
-    const celda = document.createElement("td");
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.dataset.nombre = persona.nombre;
-    checkbox.dataset.tipo = col;
-    celda.appendChild(checkbox);
-    fila.appendChild(celda);
+function init() {
+  // Fecha
+  const fechaDiv = document.getElementById('fecha');
+  const hoy = new Date();
+  fechaDiv.textContent = hoy.toLocaleDateString('es-CL', {
+    day:'numeric', month:'long', year:'numeric'
   });
 
-  tbody.appendChild(fila);
-});
+  // Tabla
+  const tbody = document.querySelector('#asistencia tbody');
+  personal.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.nombre}</td>
+      ${['Si','Noche','Franco','Ad.','Lic.','Otro']
+        .map(tipo => `<td><input type="checkbox" data-nombre="${p.nombre}" data-tipo="${tipo}"></td>`)
+        .join('')}
+    `;
+    tbody.appendChild(tr);
 
-// Enviar por WhatsApp
-document.getElementById("enviarWhatsApp").addEventListener("click", () => {
-  const checkboxes = document.querySelectorAll("input[type='checkbox']");
-  const resumen = {};
-
-  checkboxes.forEach(checkbox => {
-    if (checkbox.checked) {
-      const nombre = checkbox.dataset.nombre;
-      const tipo = checkbox.dataset.tipo.toUpperCase();
-
-      if (!resumen[nombre]) resumen[nombre] = [];
-      resumen[nombre].push(tipo);
-    }
+    // Solo 1 checkbox por fila
+    const checks = tr.querySelectorAll('input[type="checkbox"]');
+    checks.forEach(cb => {
+      cb.addEventListener('click', () => {
+        if (!cb.checked) return;
+        checks.forEach(o => { if (o!==cb) o.checked = false; });
+      });
+    });
   });
 
-  if (Object.keys(resumen).length === 0) {
-    alert("No hay asistencias marcadas.");
-    return;
-  }
+  // Enviar WhatsApp
+  document.getElementById('enviarWhatsApp')
+    .addEventListener('click', () => {
+      const rows = document.querySelectorAll('#asistencia tbody tr');
+      let msg = `📋 Asistencia ${hoy.toLocaleDateString('es-CL')}\n`;
+      rows.forEach(tr => {
+        const nombre = tr.cells[0].textContent;
+        const sel = Array.from(tr.querySelectorAll('input:checked'))
+                      .map(cb => cb.dataset.tipo)
+                      .join(', ');
+        msg += `• ${nombre}: ${sel || 'Sin marcar'}\n`;
+      });
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    });
+}
 
-  let mensaje = `📋 *Asistencia - ${fechaActual.toLocaleDateString("es-CL")}*\n\n`;
-
-  for (const nombre in resumen) {
-    mensaje += `• ${nombre}: ${resumen[nombre].join(", ")}\n`;
-  }
-
-  const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
-  window.open(url, "_blank");
-});
-
+document.addEventListener('DOMContentLoaded', init);
