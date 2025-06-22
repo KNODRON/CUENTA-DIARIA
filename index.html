@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0ea5e9">
+  <meta name="theme-color" content="#4caf50">
   <title>SECCIÓN ANÁLISIS CRIMINAL</title>
 
   <!-- PWA manifest e íconos -->
@@ -21,6 +21,7 @@
   </header>
 
   <main>
+    <!-- Contenedor scrollable para la tabla -->
     <div class="scrollable">
       <table id="asistencia">
         <thead>
@@ -34,10 +35,13 @@
             <th>Otro</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          <!-- Filas generadas dinámicamente -->
+        </tbody>
       </table>
     </div>
 
+    <!-- Botón alineado a la derecha -->
     <div class="acciones">
       <button id="enviarWhatsApp">Enviar al WhatsApp</button>
     </div>
