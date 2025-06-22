@@ -1,57 +1,116 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#4caf50">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SECCIÓN ANÁLISIS CRIMINAL</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #4CAF50;
+      overflow-x: hidden;
+    }
 
-  <!-- PWA manifest e íconos -->
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon-192.png" sizes="192x192">
-  <link rel="apple-touch-icon" href="icon-192.png">
+    h1 {
+      text-align: center;
+      color: white;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
 
-  <!-- Estilos -->
-  <link rel="stylesheet" href="styles.css">
+    .fecha {
+      text-align: center;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .tabla-contenedor {
+      width: 100%;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 95%;
+      background-color: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 4px 6px;
+      text-align: center;
+      color: white;
+    }
+
+    th {
+      background-color: rgba(0, 0, 0, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      backdrop-filter: blur(6px);
+    }
+
+    tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.1);
+      margin: 0 2px;
+    }
+
+    @media (max-width: 600px) {
+      table {
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>SECCIÓN ANÁLISIS CRIMINAL</h1>
-    <div id="fecha"></div>
-  </header>
+  <h1>SECCIÓN ANÁLISIS CRIMINAL</h1>
+  <div class="fecha">21/6/2025</div>
 
-  <main>
-    <!-- Contenedor scrollable para la tabla -->
-    <div class="scrollable">
-      <table id="asistencia">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Si</th>
-            <th>Noche</th>
-            <th>Franco</th>
-            <th>Ad.</th>
-            <th>Lic.</th>
-            <th>Otro</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Filas generadas dinámicamente -->
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Botón alineado a la derecha -->
-    <div class="acciones">
-      <button id="enviarWhatsApp">Enviar al WhatsApp</button>
-    </div>
-  </main>
-
-  <script src="app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-  </script>
+  <div class="tabla-contenedor">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>SÍ</th>
+          <th>NO</th>
+          <th>FR.</th>
+          <th>AD.</th>
+          <th>LIC.</th>
+          <th>OTROS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tte. Ejemplo</td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+        </tr>
+        <tr>
+          <td>SO. Pérez</td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+          <td><input type="checkbox" /></td>
+        </tr>
+        <!-- Agrega más filas aquí -->
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
+
