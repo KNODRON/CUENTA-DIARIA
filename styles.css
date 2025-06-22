@@ -150,3 +150,51 @@ input[type="checkbox"] {
     font-size: 0.85rem;
   }
 }
+/* ── CONTENEDOR SCROLLABLE SOLO VERTICAL ── */
+.scrollable {
+  max-height: calc(100vh - 8rem); /* ajusta 8rem a la altura real de tu header+botón */
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0 1rem 1rem;
+}
+
+/* ── TABLA AJUSTADA PARA MÓVIL ── */
+#asistencia {
+  width: 100%;
+  table-layout: fixed;  /* reparte el ancho equitativamente */
+  border-collapse: collapse;
+}
+#asistencia th,
+#asistencia td {
+  padding: 0.25rem 0.4rem;   /* muy compacto */
+  font-size: 0.8rem;
+  white-space: normal;       /* deja saltar líneas si hace falta */
+  word-break: break-word;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+#asistencia th:first-child,
+#asistencia td:first-child {
+  text-align: left;
+}
+
+/* ── HEADER PEGADO ── */
+#asistencia thead th {
+  position: sticky;
+  top: 0;                     /* pegado al top del contenedor scrollable */
+  background: var(--header-bg);
+  z-index: 10;
+}
+
+/* ── CASILLAS AÚN MÁS COMPACTAS ── */
+input[type="checkbox"] {
+  width: 0.9rem;
+  height: 0.9rem;
+  margin: 0;
+  accent-color: var(--accent);
+  background-color: #fff;
+}
+
+/* ── FILAS ALTERNAS ── */
+tbody tr:nth-child(even) {
+  background: var(--row-alt);
+}
