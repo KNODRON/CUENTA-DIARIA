@@ -1,181 +1,152 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SECCIÓN ANÁLISIS CRIMINAL</title>
-  <link rel="manifest" href="manifest.json">
-  <style>
-    /*────────────────────────────────────────
-      VARIABLES DE COLOR
-    ────────────────────────────────────────*/
-    :root {
-      --bg: #4caf50;
-      --text: #ffffff;
-      --header-bg: rgba(255,255,255,0.2);
-      --row-alt: rgba(255,255,255,0.1);
-      --accent: #1976d2;
-      --shadow: rgba(0,0,0,0.2);
-    }
+/*────────────────────────────────────────
+  VARIABLES DE COLOR
+────────────────────────────────────────*/
+:root {
+  --bg: #4caf50;            /* verde de fondo */
+  --text: #ffffff;          /* texto blanco */
+  --header-bg: rgba(255,255,255,0.2);
+  --row-alt: rgba(255,255,255,0.1);
+  --accent: #1976d2;        /* azul de tiqueado */
+  --shadow: rgba(0,0,0,0.2);
+}
 
-    /* RESET & BODY */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: system-ui, sans-serif;
-      line-height: 1.4;
-    }
+/*────────────────────────────────────────
+  RESET & BODY
+────────────────────────────────────────*/
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  line-height: 1.4;
+}
 
-    /* HEADER */
-    header {
-      text-align: center;
-      padding: 1.5rem 1rem 0.5rem;
-    }
-    header h1 {
-      font-size: 2rem;
-      letter-spacing: 1px;
-      margin-bottom: 0.25rem;
-    }
-    #fecha {
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.8);
-    }
+/*────────────────────────────────────────
+  HEADER Y FECHA
+────────────────────────────────────────*/
+header {
+  text-align: center;
+  padding: 1.5rem 1rem 0.5rem;
+}
+header h1 {
+  font-size: 2rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+}
+#fecha {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.8);
+}
 
-    /* CONTENEDOR SCROLLABLE */
-    .scrollable {
-      max-height: calc(100vh - 8rem);
-      overflow-y: auto;
-      overflow-x: hidden;
-      margin: 0 1rem;
-      background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-      box-shadow: 0 4px 12px var(--shadow);
-      padding: 1rem 0 0;
-    }
+/*────────────────────────────────────────
+  CONTENEDOR SCROLLABLE (sólo vertical)
+────────────────────────────────────────*/
+.scrollable {
+  max-height: calc(100vh - 8rem); /* ajusta según tu header+botón */
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0 1rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--shadow);
+  padding: 1rem 0 0;
+}
 
-    /* TABLA */
-    #asistencia {
-      width: 100%;
-      table-layout: fixed;
-      border-collapse: collapse;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    thead {
-      background: var(--header-bg);
-    }
-    thead th {
-      padding: 0.3rem 0.4rem;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      position: sticky;
-      top: 3rem;
-      z-index: 5;
-    }
-    th, td {
-      border-bottom: 1px solid rgba(255,255,255,0.3);
-      padding: 0.3rem 0.4rem;
-      font-size: 0.85rem;
-      white-space: normal;
-      word-break: break-word;
-    }
-    th:first-child, td:first-child {
-      text-align: left;
-    }
-    tbody tr:nth-child(even) {
-      background: var(--row-alt);
-    }
-    tbody tr:hover {
-      background: rgba(255,255,255,0.15);
-    }
-
-    /* CHECKBOXES */
-    input[type="checkbox"] {
-      width: 1rem;
-      height: 1rem;
-      margin: 0;
-      accent-color: var(--accent);
-      background-color: #fff;
-      border-radius: 3px;
-    }
-
-    /* BOTÓN WHATSAPP */
-    .acciones {
-      display: flex;
-      justify-content: flex-end;
-      margin: 1rem;
-    }
-    #enviarWhatsApp {
-      padding: 0.6rem 1.2rem;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      box-shadow: 0 2px 6px var(--shadow);
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-    }
-    #enviarWhatsApp:hover {
-      background: #1565c0;
-      transform: translateY(-2px);
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 600px) {
-      .scrollable {
-        max-height: calc(100vh - 7.5rem);
-      }
-      thead th, th, td {
-        padding: 0.25rem 0.3rem;
-        font-size: 0.8rem;
-      }
-      #enviarWhatsApp {
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>SECCIÓN ANÁLISIS CRIMINAL</h1>
-    <div id="fecha"></div>
-  </header>
-
-  <main>
-    <div class="scrollable">
-      <table id="asistencia">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Sí</th>
-            <th>Noche</th>
-            <th>Franco</th>
-            <th>Ad.</th>
-            <th>Lic.</th>
-            <th>Otro</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <div class="acciones">
-      <button id="enviarWhatsApp">Enviar al WhatsApp</button>
-    </div>
-  </main>
-
-  <script src="app.js"></script>
-</body>
-</html>
-
-/* ── FILAS ALTERNAS ── */
+/*────────────────────────────────────────
+  TABLA AJUSTADA PARA MÓVIL
+────────────────────────────────────────*/
+#asistencia {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-radius: 4px;
+  overflow: hidden;
+}
+thead {
+  background: var(--header-bg);
+}
+thead th {
+  padding: 0.3rem 0.4rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 3rem;  /* ajusta hasta quedar justo bajo tu fecha */
+  z-index: 5;
+}
 tbody tr:nth-child(even) {
   background: var(--row-alt);
+}
+tbody tr:hover {
+  background: rgba(255,255,255,0.15);
+}
+th, td {
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding: 0.3rem 0.4rem;
+  font-size: 0.85rem;
+  white-space: normal;
+  word-break: break-word;
+}
+th:first-child,
+td:first-child {
+  text-align: left;
+}
+tbody tr {
+  line-height: 1.2;
+}
+
+/*────────────────────────────────────────
+  CASILLAS COMPACTAS
+────────────────────────────────────────*/
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--accent);
+  background-color: #fff;
+  border-radius: 3px;
+}
+
+/*────────────────────────────────────────
+  BOTÓN WHATSAPP
+────────────────────────────────────────*/
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin: 1rem;
+}
+#enviarWhatsApp {
+  padding: 0.6rem 1.2rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px var(--shadow);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+#enviarWhatsApp:hover {
+  background: #1565c0;
+  transform: translateY(-2px);
+}
+
+/*────────────────────────────────────────
+  RESPONSIVE REAJUSTES
+────────────────────────────────────────*/
+@media (max-width: 600px) {
+  .scrollable {
+    max-height: calc(100vh - 7.5rem);
+  }
+  thead th, th, td {
+    padding: 0.25rem 0.3rem;
+    font-size: 0.8rem;
+  }
+  #enviarWhatsApp {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
 }
