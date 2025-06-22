@@ -127,3 +127,24 @@ function enviarWhatsApp() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', e => {
+  // Evita el banner automático de Chrome
+  e.preventDefault();
+  deferredPrompt = e;
+  // Muestra tu botón de instalación
+  const btn = document.getElementById('btn-install');
+  btn.style.display = 'inline-block';
+
+  btn.addEventListener('click', () => {
+    // Lanza el prompt nativo
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choiceResult => {
+      // Puedes chequear choiceResult.outcome ('accepted' o 'dismissed')
+      deferredPrompt = null;
+      btn.style.display = 'none'; // ocultar botón si ya respondió
+    });
+  });
+});
