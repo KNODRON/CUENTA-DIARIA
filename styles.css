@@ -1,83 +1,81 @@
-/* Tema neón sobrio y responsive */
+/* TEMA VERDE + BLANCO + AZUL sobre tu CSS existente */
+
+/* 1. Fondo general y texto */
 body {
-  margin: 0;
-  padding: 0;
-  background: #121212;
-  color: #e0f7fa;
-  font-family: Arial, sans-serif;
+  background: #4caf50;      /* verde de fondo */
+  color: #ffffff;           /* texto blanco */
 }
-header { text-align: center; margin: 1rem; }
-#fecha { color: #80deea; font-size: 0.9rem; }
+
+/* 2. Cabecera y fecha */
+header h1,
+#fecha {
+  color: #ffffff;           /* mantén el texto de cabecera en blanco */
+}
+
+/* 3. Tabla */
 table {
-  width: 100%;
-  max-width: 800px;
-  margin: auto;
   border-collapse: collapse;
 }
 th, td {
-  border: 2px solid #00e5ff;
+  border: 2px solid #ffffff;        /* líneas blancas */
   padding: 0.6rem;
   text-align: center;
+  background: transparent;          /* transparente para dejar ver el verde */
+  color: #ffffff;                   /* contenido en blanco */
 }
 th {
-  background: rgba(0,229,255,0.1);
-  color: #b2ebf2;
+  background: rgba(255,255,255,0.1); /* ligero traslúcido blanco */
 }
-td {
-  background: rgba(255,255,255,0.05);
+#asistencia {
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
 }
+
+/* 4. Casillas (checkbox) */
 input[type="checkbox"] {
   width: 1.2rem;
   height: 1.2rem;
+  accent-color: #1976d2;     /* tiqueado azul */
+  background-color: #ffffff; /* fondo blanco */
 }
+
+/* 5. Botones */
 button {
   margin: 1rem 0.5rem;
   padding: 0.7rem 1.3rem;
-  border: 2px solid #00e5ff;
+  border: 2px solid #ffffff;       /* borde blanco */
   background: transparent;
-  color: #00e5ff;
+  color: #ffffff;                  /* texto blanco */
   border-radius: 0.3rem;
   cursor: pointer;
   transition: background 0.3s;
 }
 button:hover {
-  background: rgba(0,229,255,0.1);
+  background: rgba(255,255,255,0.2); /* hover suave */
 }
 
+/* 6. Responsive pequeña pantalla */
 @media (max-width: 600px) {
   th, td { padding: 0.4rem; font-size: 0.85rem; }
   button { padding: 0.5rem 1rem; font-size: 0.9rem; }
 }
 
-/* 1. Hacer que el contenedor sea scrollable */
+/* 7. Scrollable + sticky headers (sin cambios) */
 .scrollable {
-  max-height: calc(100vh - 6rem); /* ajusta 6rem al alto de tu header+botones */
+  max-height: calc(100vh - 6rem);
   overflow-y: auto;
 }
-
-/* 2. Sticky headers en la tabla */
 #asistencia thead th {
   position: sticky;
-  top: 4rem;               /* ajusta 4rem al alto de tu header (título+fecha) */
-  background: #121212;     /* mismo color de fondo que el resto */
-  z-index: 10;             /* encima de las filas */
+  top: 4rem;
+  background: #4caf50;  /* mismo verde de fondo */
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* 3. Opcional: sombra sutil para separar */
-#asistencia thead th {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-}
-/* Alinear solo el botón de WhatsApp a la derecha */
-#enviarWhatsApp {
-  display: block;           /* Para que margin auto funcione */
-  margin: 1rem 1rem 1rem auto; /* top right bottom left */
-}
-/* 1. Asegúrate de que el contenedor (main) sea position: relative para que el float funcione bien */
-main {
-  position: relative;
-}
-
-/* 2. Fuerza el float a la derecha con !important */
+/* 8. Botón WhatsApp a la derecha */
+main { position: relative; }
 #enviarWhatsApp {
   float: right !important;
   margin: 1rem !important;
