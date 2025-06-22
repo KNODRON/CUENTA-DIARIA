@@ -48,3 +48,22 @@ button:hover {
   th, td { padding: 0.4rem; font-size: 0.85rem; }
   button { padding: 0.5rem 1rem; font-size: 0.9rem; }
 }
+
+/* 1. Hacer que el contenedor sea scrollable */
+.scrollable {
+  max-height: calc(100vh - 6rem); /* ajusta 6rem al alto de tu header+botones */
+  overflow-y: auto;
+}
+
+/* 2. Sticky headers en la tabla */
+#asistencia thead th {
+  position: sticky;
+  top: 4rem;               /* ajusta 4rem al alto de tu header (título+fecha) */
+  background: #121212;     /* mismo color de fondo que el resto */
+  z-index: 10;             /* encima de las filas */
+}
+
+/* 3. Opcional: sombra sutil para separar */
+#asistencia thead th {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
