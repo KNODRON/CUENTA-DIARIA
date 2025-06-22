@@ -26,7 +26,7 @@ const personal = [
 ];
 
 // 2. Etiquetas de casillas (en el mismo orden de tu tabla)
-const labels = ['Si','No','Lic.','Ad.','Noche','Franco','Otro'];
+const labels = ['Si','Noche','Franco','Ad.','Lic.','Otro'];
 
 function init() {
   // 2.1 Mostrar fecha
