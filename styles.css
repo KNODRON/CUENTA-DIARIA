@@ -37,70 +37,86 @@ header h1 {
   letter-spacing: 1px;
 }
 #fecha {
-  margin-top: 0.25rem;
   font-size: 0.9rem;
   color: rgba(255,255,255,0.8);
+  margin-bottom: 0.5rem;
 }
 
 /*────────────────────────────────────────
-  CONTENEDOR SCROLLABLE
+  CONTENEDOR SCROLLABLE (sólo vertical)
 ────────────────────────────────────────*/
 .scrollable {
-  max-height: calc(100vh - 10rem); /* ajusta según tu header+botón */
-  overflow-y: auto;
-  margin: 0 1rem;
+  position: relative;            /* contexto para sticky */
+  max-height: calc(100vh - 8rem);/* ajusta 8rem a la suma de header+botón */
+  overflow-y: auto;              /* sólo scroll vertical */
+  overflow-x: hidden;            /* sin scroll horizontal */
+  margin: 0 1rem 1rem;
   background: rgba(255,255,255,0.05);
   border-radius: 8px;
   box-shadow: 0 4px 12px var(--shadow);
-  padding: 1rem 0 0;
+  padding-top: 2.5rem;           /* espacio igual a la altura de thead */
 }
 
 /*────────────────────────────────────────
-  TABLA ELEGANTE
+  TABLA AJUSTADA PARA MÓVIL
 ────────────────────────────────────────*/
-table {
+#asistencia {
   width: 100%;
+  table-layout: fixed;           /* reparte columnas equitativamente */
   border-collapse: collapse;
-  border-radius: 4px;
-  overflow: hidden;
 }
-thead {
+#asistencia thead {
+  position: absolute;
+  top: 0;                        /* pegado al top de .scrollable */
+  left: 0;
+  right: 0;
+}
+#asistencia thead th {
   background: var(--header-bg);
-}
-thead th {
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  position: sticky;
-  top: calc(1.5rem + 1rem + 0.9rem + 1rem); 
-  /* 1.5rem header padding + 1rem header bottom + 0.9rem fecha + 1rem scrollable padding */
-  z-index: 5;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  /* no hace falta sticky, va en thead absoluto */
 }
-tbody tr {
-  transition: background 0.2s;
-}
-tbody tr:nth-child(even) {
+#asistencia tbody tr:nth-child(even) {
   background: var(--row-alt);
 }
-tbody tr:hover {
+#asistencia tbody tr:hover {
   background: rgba(255,255,255,0.15);
 }
-th, td {
+#asistencia th,
+#asistencia td {
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+  white-space: normal;
+  word-break: break-word;
   border-bottom: 1px solid rgba(255,255,255,0.3);
-  padding: 0.6rem 1rem;
 }
-th:first-child,
-td:first-child {
+#asistencia th:first-child,
+#asistencia td:first-child {
   text-align: left;
+}
+#asistencia tbody {
+  /* empuja el cuerpo hacia abajo para dejar espacio al thead absoluto */
+  display: block;
+  margin-top: 2.5rem;           /* mismo valor que padding-top */
+}
+#asistencia tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  line-height: 1.2;
 }
 
 /*────────────────────────────────────────
-  CASILLAS AZUL/BLANCO
+  CASILLAS COMPACTAS
 ────────────────────────────────────────*/
 input[type="checkbox"] {
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin: 0;
   accent-color: var(--accent);
   background-color: #fff;
   border-radius: 3px;
@@ -112,10 +128,10 @@ input[type="checkbox"] {
 .acciones {
   display: flex;
   justify-content: flex-end;
-  margin: 1rem;
+  margin: 0 1rem 1rem;
 }
 #enviarWhatsApp {
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1.2rem;
   background: var(--accent);
   color: #fff;
   border: none;
@@ -130,15 +146,20 @@ input[type="checkbox"] {
 }
 
 /*────────────────────────────────────────
-  RESPONSIVE
+  RESPONSIVE REAJUSTES
 ────────────────────────────────────────*/
 @media (max-width: 600px) {
-  thead th, th, td {
-    padding: 0.5rem;
-    font-size: 0.85rem;
+  .scrollable {
+    max-height: calc(100vh - 7rem);
+  }
+  #asistencia thead th,
+  #asistencia th,
+  #asistencia td {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.8rem;
   }
   #enviarWhatsApp {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
   }
 }
