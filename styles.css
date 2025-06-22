@@ -72,3 +72,13 @@ button:hover {
   display: block;           /* Para que margin auto funcione */
   margin: 1rem 1rem 1rem auto; /* top right bottom left */
 }
+/* 1. Asegúrate de que el contenedor (main) sea position: relative para que el float funcione bien */
+main {
+  position: relative;
+}
+
+/* 2. Fuerza el float a la derecha con !important */
+#enviarWhatsApp {
+  float: right !important;
+  margin: 1rem !important;
+}
