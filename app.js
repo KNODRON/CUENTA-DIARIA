@@ -1,4 +1,5 @@
 const personal = [
+  { nombre: 'Cap. Valenzuela',   seccion: 'Analistas',           rol: 'PNS' },
   { nombre: 'Tte. Cortes A',     seccion: 'Analistas',           rol: 'PNS' },
   { nombre: 'SOM Cabezas P',      seccion: 'Analistas',           rol: 'PNI' },
   { nombre: 'Subof. Iturra T',    seccion: 'Analistas',           rol: 'PNI' },
