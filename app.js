@@ -116,7 +116,7 @@ function generarResumen() {
 
   const totalPNS = Object.values(resumen).reduce((sum, v) => sum + v.PNS, 0);
   const totalPNI = Object.values(resumen).reduce((sum, v) => sum + v.PNI, 0);
-  texto += `Total: ${String(totalPNS).padStart(2, '0')} PNS y ${totalPNI}`PNI;
+  texto += `Total: ${String(totalPNS).padStart(2, '0')} PNS y PNI ${totalPNI}`;
 
   return texto;
 }
