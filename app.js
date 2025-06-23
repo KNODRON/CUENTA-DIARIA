@@ -104,7 +104,7 @@ function generarResumen() {
 
   // Construir mensaje
   const fecha = document.getElementById('fecha').textContent;
-  let texto = `Buenos días mi coronel, Sección Análisis Criminal: ${fecha}\n`;
+  let texto = `Buenos días mi Coronel, Sección Análisis Criminal: ${fecha}\n`;
 
   for (const sec of Object.keys(resumen)) {
     const { PNS, PNI } = resumen[sec];
@@ -116,7 +116,7 @@ function generarResumen() {
 
   const totalPNS = Object.values(resumen).reduce((sum, v) => sum + v.PNS, 0);
   const totalPNI = Object.values(resumen).reduce((sum, v) => sum + v.PNI, 0);
-  texto += `Total: ${String(totalPNS).padStart(2, '0')} PNS y PNI ${totalPNI}`;
+  texto += `Total: ${String(totalPNS).padStart(2, '0')} PNS y ${totalPNI}`PNI;
 
   return texto;
 }
