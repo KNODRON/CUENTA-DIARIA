@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#4caf50">
   <title>SECCIÓN ANÁLISIS CRIMINAL</title>
 
@@ -21,6 +21,7 @@
   </header>
 
   <main>
+    <!-- Contenedor scrollable -->
     <div class="scrollable">
       <table id="asistencia">
         <thead>
@@ -40,14 +41,14 @@
       </table>
     </div>
 
+    <!-- Botones de acción -->
     <div class="acciones">
-      <button id="btn-install" style="display:none;">
-           Instalar App
-      </button>
+      <button id="btn-install" style="display:none;">Instalar App</button>
       <button id="enviarWhatsApp">Enviar al WhatsApp</button>
     </div>
   </main>
 
+  <!-- Lógica de la app -->
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
