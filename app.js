@@ -1,5 +1,6 @@
 // app.js
 
+// Tu lista original de personal, con seccion y rol
 const personal = [
   { nombre: 'Cap. Valenzuela',   seccion: 'Analistas',           rol: 'PNS' },
   { nombre: 'Tte. Cortes A',     seccion: 'Analistas',           rol: 'PNS' },
@@ -28,40 +29,69 @@ const personal = [
 ];
 
 function init() {
-  // Mostrar fecha
+  // 1) Mostrar fecha
   const fechaDiv = document.getElementById('fecha');
-  const hoy = new Date();
-  fechaDiv.textContent = hoy.toLocaleDateString('es-CL', {
+  fechaDiv.textContent = new Date().toLocaleDateString('es-CL', {
     day: 'numeric', month: 'long', year: 'numeric'
   });
 
-  // Generar filas
+  // 2) Generar tabla con separadores de sección
   const tbody = document.querySelector('#asistencia tbody');
   tbody.innerHTML = '';
-  personal.forEach(({ nombre }) => {
+  let currentSection = '';
+  personal.forEach(p => {
+    // Si cambió de sección, inserto un header de sección
+    if (p.seccion !== currentSection) {
+      currentSection = p.seccion;
+      const trSec = document.createElement('tr');
+      const tdSec = document.createElement('td');
+      tdSec.textContent = currentSection.toUpperCase();
+      tdSec.colSpan = 7;
+      tdSec.style.textAlign = 'center';
+      tdSec.style.fontWeight = 'bold';
+      trSec.appendChild(tdSec);
+      tbody.appendChild(trSec);
+    }
+
+    // Luego la fila de la persona
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${nombre}</td>
-      ${['si','noche','franco','ad','lic','otro']
-        .map(tipo =>
-          `<td><input type="checkbox" data-nombre="${nombre}" data-tipo="${tipo}"></td>`
-        ).join('')}
-    `;
-    // Solo un checkbox por fila
+    // Columna nombre
+    const tdName = document.createElement('td');
+    tdName.textContent = p.nombre;
+    tr.appendChild(tdName);
+
+    // Las 6 casillas (SI, NOCHE, FRANCO, AD, LIC, OTRO)
+    ['si','noche','franco','ad','lic','otro'].forEach(tipo => {
+      const td = document.createElement('td');
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.dataset.nombre = p.nombre;
+      cb.dataset.tipo   = tipo;
+      td.appendChild(cb);
+      tr.appendChild(td);
+    });
+
+    // Lógica: solo uno marcado por fila
     const checks = tr.querySelectorAll('input[type="checkbox"]');
-    checks.forEach(cb =>
+    checks.forEach(cb => {
       cb.addEventListener('change', () => {
-        if (cb.checked) checks.forEach(o => o !== cb && (o.checked = false));
-      })
-    );
+        if (cb.checked) {
+          checks.forEach(other => {
+            if (other !== cb) other.checked = false;
+          });
+        }
+      });
+    });
+
     tbody.appendChild(tr);
   });
 
-  // Enlazar envío a WhatsApp
+  // 3) Botón WhatsApp
   document.getElementById('enviarWhatsApp')
-    .addEventListener('click', enviarWhatsApp);
+          .addEventListener('click', enviarWhatsApp);
 }
 
+// Esta función arma el texto final y abre WhatsApp
 function enviarWhatsApp() {
   const hoy = new Date();
   const fechaTexto = hoy.toLocaleDateString('es-CL', {
@@ -70,46 +100,47 @@ function enviarWhatsApp() {
 
   let mensaje = `Buenos días mi coronel, Sección Análisis Criminal: ${fechaTexto}\n`;
 
-  // Inicializar contadores por sección y rol
+  // Inicializo resumen por sección
   const resumen = {};
-  personal.forEach(({ seccion, rol }) => {
-    if (!resumen[seccion]) resumen[seccion] = { PNS: 0, PNI: 0 };
+  personal.forEach(p => {
+    if (!resumen[p.seccion]) {
+      resumen[p.seccion] = { PNS: 0, PNI: 0 };
+    }
   });
 
-  // Recorremos cada fila: si hay *cualquier* checkbox marcado, contamos
+  // Recorro filas: si tienen ANY checkbox marcado → cuento según rol
   document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
-    const nombre = tr.cells[0].textContent;
+    // distingo TR de sección (solo tienen 1 TD) de TR de persona (7 TDs)
+    if (tr.children.length !== 7) return;
+
     const marcado = tr.querySelector('input[type="checkbox"]:checked');
     if (marcado) {
-      // Buscamos la persona en nuestro array original
+      const nombre = tr.cells[0].textContent;
       const persona = personal.find(p => p.nombre === nombre);
       resumen[persona.seccion][persona.rol]++;
     }
   });
 
-  // Montar líneas por sección
+  // Armo líneas por sección (solo si >0)
   for (const seccion in resumen) {
     const { PNS, PNI } = resumen[seccion];
-    // Si ambos son cero, saltamos la sección
     if (PNS === 0 && PNI === 0) continue;
 
     mensaje += `* ${seccion}: `;
-
-    // mostrar "XX PNS" si PNS>0
     if (PNS > 0) mensaje += `${String(PNS).padStart(2,'0')} PNS`;
     if (PNS > 0 && PNI > 0) mensaje += ' y ';
-    // mostrar "YY PNI" si PNI>0
     if (PNI > 0) mensaje += `${String(PNI).padStart(2,'0')} PNI`;
-
     mensaje += '\n';
   }
 
   // Totales generales
-  const totPNS = Object.values(resumen).reduce((sum, r) => sum + r.PNS, 0);
-  const totPNI = Object.values(resumen).reduce((sum, r) => sum + r.PNI, 0);
+  const totPNS = Object.values(resumen).reduce((s,r) => s + r.PNS, 0);
+  const totPNI = Object.values(resumen).reduce((s,r) => s + r.PNI, 0);
   mensaje += `Total: ${String(totPNS).padStart(2,'0')} PNS y ${String(totPNI).padStart(2,'0')} PNI`;
 
-  // Abrimos WhatsApp
-  const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
-  window.open(url, '_blank');
+  // Abrir WhatsApp
+  window.open(`https://wa.me/?text=${encodeURIComponent(mensaje)}`, '_blank');
 }
+
+// Arrancar
+document.addEventListener('DOMContentLoaded', init);
