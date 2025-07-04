@@ -1,20 +1,21 @@
 // sw.js
 
-// 1) Subimos la versión de caché para que descargue todo de cero
-const CACHE_NAME = 'pwa-asistencia-v4';
+const CACHE_NAME = 'pwa-asistencia-v4';  // **cambia de v3 a v4** para invalidar caché viejo
 
 const urlsToCache = [
-  '.',               // index.html
+  '.', 
   'index.html',
   'styles.css',
   'app.js',
   'manifest.json',
   'icon-192.png',
   'icon-512.png',
-  'bg.jpeg'          // <-- aquí tu imagen de fondo EXACTAMENTE
+  'bg.jpeg'     // asegúrate de que sea exactamente este nombre
 ];
 
 self.addEventListener('install', event => {
+  // forzar activation inmediato:
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
@@ -22,15 +23,18 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  // Limpiamos versiones viejas de caché
+  // tomar control inmediatamente y borrar cachés viejos
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) return caches.delete(key);
-        })
+    Promise.all([
+      self.clients.claim(),
+      caches.keys().then(keys =>
+        Promise.all(
+          keys.map(key => {
+            if (key !== CACHE_NAME) return caches.delete(key);
+          })
+        )
       )
-    )
+    ])
   );
 });
 
