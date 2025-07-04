@@ -99,7 +99,7 @@ function enviarWhatsApp() {
   // 8) Construir mensaje
   const hoy = new Date();
   const fechaTexto = hoy.toLocaleDateString('es-CL', { day:'2-digit', month:'2-digit', year:'numeric' });
-  let mensaje = `Buenos días mi coronel, Sección Análisis Criminal: ${fechaTexto}\n\n`;
+  let mensaje = `Buenos días mi Coronel, Sección Análisis Criminal: ${fechaTexto}\n\n`;
 
   let totPNS = 0, totPNI = 0;
   for (const seccion in resumen) {
