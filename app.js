@@ -28,14 +28,14 @@ const personal = [
 ];
 
 function init() {
-  // 1) Mostrar fecha
+  // Mostrar fecha
   const fechaDiv = document.getElementById('fecha');
   const hoy = new Date();
   fechaDiv.textContent = hoy.toLocaleDateString('es-CL', {
     day: 'numeric', month: 'long', year: 'numeric'
   });
 
-  // 2) Generar filas
+  // Generar filas
   const tbody = document.querySelector('#asistencia tbody');
   tbody.innerHTML = '';
   personal.forEach(({ nombre }) => {
@@ -47,50 +47,47 @@ function init() {
           `<td><input type="checkbox" data-nombre="${nombre}" data-tipo="${tipo}"></td>`
         ).join('')}
     `;
-    // sólo 1 marcado a la vez
+    // Solo un checkbox por fila
     const checks = tr.querySelectorAll('input[type="checkbox"]');
     checks.forEach(cb =>
       cb.addEventListener('change', () => {
-        if (!cb.checked) return;
-        checks.forEach(o => o !== cb && (o.checked = false));
+        if (cb.checked) checks.forEach(o => o !== cb && (o.checked = false));
       })
     );
     tbody.appendChild(tr);
   });
 
-  // 3) Asignar envío a WhatsApp
+  // Enlazar envío a WhatsApp
   document.getElementById('enviarWhatsApp')
     .addEventListener('click', enviarWhatsApp);
 }
 
 function enviarWhatsApp() {
-  // Fecha en dd-mm-yyyy
+  // Formato fecha
   const hoy = new Date();
   const fechaTxt = hoy.toLocaleDateString('es-CL', {
     day:'2-digit', month:'2-digit', year:'numeric'
   });
 
-  // Cabecera del mensaje
   let mensaje = `Buenos días mi coronel, Sección Análisis Criminal: ${fechaTxt}\n`;
 
-  // Inicializar resumen por sección
+  // Inicializar conteo por sección
   const resumen = {};
   personal.forEach(p => {
     if (!resumen[p.seccion]) resumen[p.seccion] = { PNS: 0, PNI: 0 };
   });
 
-  // Recojo sólo los checkboxes 'si' marcados
-  document
-    .querySelectorAll('#asistencia input[type="checkbox"][data-tipo="si"]:checked')
-    .forEach(cb => {
-      const nombre = cb.dataset.nombre;
-      const persona = personal.find(p => p.nombre === nombre);
-      if (persona) {
-        resumen[persona.seccion][persona.rol]++;
-      }
-    });
+  // Contar sólo los "si"
+  document.querySelectorAll(
+    '#asistencia input[type="checkbox"][data-tipo="si"]:checked'
+  ).forEach(cb => {
+    const persona = personal.find(p => p.nombre === cb.dataset.nombre);
+    if (persona) {
+      resumen[persona.seccion][persona.rol]++;
+    }
+  });
 
-  // Construir líneas por sección
+  // Líneas por sección
   for (const seccion in resumen) {
     const { PNS, PNI } = resumen[seccion];
     const partes = [];
@@ -99,10 +96,10 @@ function enviarWhatsApp() {
     mensaje += `* ${seccion}: ${partes.join(' - ')}\n`;
   }
 
-  // Totales generales
-  const totPNS = Object.values(resumen).reduce((a,v) => a + v.PNS, 0);
-  const totPNI = Object.values(resumen).reduce((a,v) => a + v.PNI, 0);
-  mensaje += `Total: ${String(totPNS).padStart(2,'0')} PNS y PNI ${totPNS + totPNI}`;
+  // Totales correctos
+  const totPNS = Object.values(resumen).reduce((s, r) => s + r.PNS, 0);
+  const totPNI = Object.values(resumen).reduce((s, r) => s + r.PNI, 0);
+  mensaje += `Total: ${String(totPNS).padStart(2,'0')} PNS y ${String(totPNI).padStart(2,'0')} PNI`;
 
   // Abrir WhatsApp
   window.open(`https://wa.me/?text=${encodeURIComponent(mensaje)}`, '_blank');
@@ -110,7 +107,7 @@ function enviarWhatsApp() {
 
 document.addEventListener('DOMContentLoaded', init);
 
-// PWA: beforeinstallprompt (instalación manual)
+// PWA: instalar app manual
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
