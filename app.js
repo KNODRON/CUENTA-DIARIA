@@ -28,92 +28,89 @@ const personal = [
 ];
 
 function init() {
-  // Fecha en formato largo español
+  // 1) Poner fecha
   const fechaDiv = document.getElementById('fecha');
   const hoy = new Date();
   fechaDiv.textContent = hoy.toLocaleDateString('es-CL', {
     day: 'numeric', month: 'long', year: 'numeric'
   });
 
-  // Generar filas
+  // 2) Generar filas de la tabla
   const tbody = document.querySelector('#asistencia tbody');
-  tbody.innerHTML = '';
+  tbody.innerHTML = ''; // limpio antes
 
   personal.forEach(({ nombre }) => {
     const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${nombre}</td>
+      ${['si','noche','franco','ad','lic','otro']
+        .map(tipo =>
+          `<td>
+             <input 
+               type="checkbox"
+               data-nombre="${nombre}"
+               data-tipo="${tipo}"
+             >
+           </td>`
+        ).join('')}
+    `;
 
-    // Celda de nombre
-    const tdNombre = document.createElement('td');
-    tdNombre.textContent = nombre;
-    tr.appendChild(tdNombre);
-
-    // Checkbox por cada tipo
-    ['si','noche','franco','ad','lic','otro'].forEach(tipo => {
-      const td = document.createElement('td');
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.dataset.nombre = nombre;
-      cb.dataset.tipo = tipo;
-      td.appendChild(cb);
-      tr.appendChild(td);
-    });
-
-    // Lógica: solo 1 checkbox marcado a la vez por fila
+    // 3) Lógica: solo un checkbox marcado por fila
     const checks = tr.querySelectorAll('input[type="checkbox"]');
-    checks.forEach(cb => {
+    checks.forEach(cb =>
       cb.addEventListener('change', () => {
         if (cb.checked) {
           checks.forEach(o => {
             if (o !== cb) o.checked = false;
           });
         }
-      });
-    });
+      })
+    );
 
     tbody.appendChild(tr);
   });
 
-  // Asignar evento al botón
+  // 4) Enlazar botón de WhatsApp
   document.getElementById('enviarWhatsApp')
     .addEventListener('click', enviarWhatsApp);
 }
 
 function enviarWhatsApp() {
-  // Fecha breve dd-mm-yyyy
+  // Fecha corta dd-mm-yyyy
   const hoy = new Date();
-  const fechaTexto = hoy.toLocaleDateString('es-CL', {
+  const fechaTxt = hoy.toLocaleDateString('es-CL', {
     day:'2-digit', month:'2-digit', year:'numeric'
   });
 
-  // Encabezado
-  let mensaje = `Buenos días mi Coronel, Sección Análisis Criminal: ${fechaTexto}\n`;
+  // Encabezado del mensaje
+  let mensaje = `Buenos días mi coronel, Sección Análisis Criminal: ${fechaTxt}\n`;
 
-  // Preparo resumen[seccion]={PNS:0,PNI:0}
+  // Preparo resumen por sección
   const resumen = {};
-  personal.forEach(p => {
-    if (!resumen[p.seccion]) resumen[p.seccion] = { PNS:0, PNI:0 };
+  personal.forEach(({ seccion }) => {
+    if (!resumen[seccion]) resumen[seccion] = { PNS: 0, PNI: 0 };
   });
 
-  // Recorro cada fila y miro únicamente si está marcado el "si"
-  document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
-    const cbSi = tr.querySelector('input[type="checkbox"][data-tipo="si"]:checked');
-    if (cbSi) {
-      const nombre = tr.cells[0].textContent;
+  // Sólo contamos los “si”
+  document.querySelectorAll('input[type="checkbox"][data-tipo="si"]:checked')
+    .forEach(cb => {
+      const nombre = cb.dataset.nombre;
       const persona = personal.find(p => p.nombre === nombre);
-      if (persona) resumen[persona.seccion][persona.rol]++;
-    }
-  });
+      if (persona) {
+        resumen[persona.seccion][persona.rol]++;
+      }
+    });
 
   // Armo líneas por sección
   for (const seccion in resumen) {
     const { PNS, PNI } = resumen[seccion];
     const partes = [];
-    if (PNS) partes.push(`${String(PNS).padStart(2,'0')} PNS`);
-    if (PNI) partes.push(`${String(PNI).padStart(2,'0')} PNI`);
+    if (PNS > 0) partes.push(`${String(PNS).padStart(2,'0')} PNS`);
+    if (PNI > 0) partes.push(`${String(PNI).padStart(2,'0')} PNI`);
     mensaje += `* ${seccion}: ${partes.join(' - ')}\n`;
   }
 
-  // Totales
+  // Totales generales
   const totPNS = Object.values(resumen).reduce((sum, r) => sum + r.PNS, 0);
   const totPNI = Object.values(resumen).reduce((sum, r) => sum + r.PNI, 0);
   mensaje += `Total: ${String(totPNS).padStart(2,'0')} PNS y PNI ${totPNS + totPNI}`;
@@ -123,10 +120,10 @@ function enviarWhatsApp() {
   window.open(url, '_blank');
 }
 
-// Iniciar al cargar
+// Iniciar
 document.addEventListener('DOMContentLoaded', init);
 
-// PWA: manejo beforeinstallprompt
+// PWA: instalar app
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
