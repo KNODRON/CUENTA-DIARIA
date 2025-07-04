@@ -29,118 +29,77 @@ const personal = [
 ];
 
 function init() {
-  // 1) Mostrar fecha
+  // Mostrar fecha
   const fechaDiv = document.getElementById('fecha');
-  fechaDiv.textContent = new Date().toLocaleDateString('es-CL', {
+  const hoy = new Date();
+  fechaDiv.textContent = hoy.toLocaleDateString('es-CL', {
     day: 'numeric', month: 'long', year: 'numeric'
   });
 
-  // 2) Generar tabla con separadores de sección
+  // Render de filas
   const tbody = document.querySelector('#asistencia tbody');
   tbody.innerHTML = '';
-  let currentSection = '';
-  personal.forEach(p => {
-    // Si cambió de sección, inserto un header de sección
-    if (p.seccion !== currentSection) {
-      currentSection = p.seccion;
-      const trSec = document.createElement('tr');
-      const tdSec = document.createElement('td');
-      tdSec.textContent = currentSection.toUpperCase();
-      tdSec.colSpan = 7;
-      tdSec.style.textAlign = 'center';
-      tdSec.style.fontWeight = 'bold';
-      trSec.appendChild(tdSec);
-      tbody.appendChild(trSec);
-    }
-
-    // Luego la fila de la persona
+  personal.forEach(({ nombre }) => {
     const tr = document.createElement('tr');
-    // Columna nombre
-    const tdName = document.createElement('td');
-    tdName.textContent = p.nombre;
-    tr.appendChild(tdName);
-
-    // Las 6 casillas (SI, NOCHE, FRANCO, AD, LIC, OTRO)
-    ['si','noche','franco','ad','lic','otro'].forEach(tipo => {
-      const td = document.createElement('td');
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.dataset.nombre = p.nombre;
-      cb.dataset.tipo   = tipo;
-      td.appendChild(cb);
-      tr.appendChild(td);
-    });
-
-    // Lógica: solo uno marcado por fila
-    const checks = tr.querySelectorAll('input[type="checkbox"]');
+    tr.innerHTML = `<td>${nombre}</td>` + 
+      ['si','noche','franco','ad','lic','otro']
+        .map(tipo => `<td><input type="checkbox" data-nombre="${nombre}" data-tipo="${tipo}"></td>`)
+        .join('');
+    // lógica “solo uno por fila”
+    const checks = tr.querySelectorAll('input');
     checks.forEach(cb => {
       cb.addEventListener('change', () => {
-        if (cb.checked) {
-          checks.forEach(other => {
-            if (other !== cb) other.checked = false;
-          });
-        }
+        if (cb.checked) checks.forEach(o => o !== cb && (o.checked = false));
       });
     });
-
     tbody.appendChild(tr);
   });
 
-  // 3) Botón WhatsApp
   document.getElementById('enviarWhatsApp')
-          .addEventListener('click', enviarWhatsApp);
+    .addEventListener('click', enviarWhatsApp);
 }
 
-// Esta función arma el texto final y abre WhatsApp
 function enviarWhatsApp() {
   const hoy = new Date();
-  const fechaTexto = hoy.toLocaleDateString('es-CL', {
-    day:'2-digit', month:'2-digit', year:'numeric'
-  });
-
+  const fechaTexto = hoy.toLocaleDateString('es-CL', { day:'2-digit', month:'2-digit', year:'numeric' });
   let mensaje = `Buenos días mi coronel, Sección Análisis Criminal: ${fechaTexto}\n`;
 
-  // Inicializo resumen por sección
+  // Inicializa contadores por sección y rol
   const resumen = {};
-  personal.forEach(p => {
-    if (!resumen[p.seccion]) {
-      resumen[p.seccion] = { PNS: 0, PNI: 0 };
-    }
+  personal.forEach(({ seccion }) => {
+    if (!resumen[seccion]) resumen[seccion] = { PNS: 0, PNI: 0 };
   });
 
-  // Recorro filas: si tienen ANY checkbox marcado → cuento según rol
+  // Recorre cada fila y fíjate solo en el checkbox “si”
   document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
-    // distingo TR de sección (solo tienen 1 TD) de TR de persona (7 TDs)
-    if (tr.children.length !== 7) return;
-
-    const marcado = tr.querySelector('input[type="checkbox"]:checked');
-    if (marcado) {
-      const nombre = tr.cells[0].textContent;
+    const nombre = tr.cells[0].textContent;
+    const siCheckbox = tr.querySelector('input[data-tipo="si"]');
+    if (siCheckbox && siCheckbox.checked) {
+      // Encuentra la persona en tu array para saber sección y rol
       const persona = personal.find(p => p.nombre === nombre);
       resumen[persona.seccion][persona.rol]++;
     }
   });
 
-  // Armo líneas por sección (solo si >0)
-  for (const seccion in resumen) {
-    const { PNS, PNI } = resumen[seccion];
-    if (PNS === 0 && PNI === 0) continue;
+  // Monta el bloque por sección
+  Object.entries(resumen).forEach(([seccion, { PNS, PNI }]) => {
+    // Solo añade si hay al menos uno
+    if (PNS || PNI) {
+      let line = `* ${seccion}: `;
+      if (PNS) line += `${String(PNS).padStart(2,'0')} PNS`;
+      if (PNS && PNI) line += ' y ';
+      if (PNI) line += `${String(PNI).padStart(2,'0')} PNI`;
+      mensaje += line + '\n';
+    }
+  });
 
-    mensaje += `* ${seccion}: `;
-    if (PNS > 0) mensaje += `${String(PNS).padStart(2,'0')} PNS`;
-    if (PNS > 0 && PNI > 0) mensaje += ' y ';
-    if (PNI > 0) mensaje += `${String(PNI).padStart(2,'0')} PNI`;
-    mensaje += '\n';
-  }
-
-  // Totales generales
-  const totPNS = Object.values(resumen).reduce((s,r) => s + r.PNS, 0);
-  const totPNI = Object.values(resumen).reduce((s,r) => s + r.PNI, 0);
+  // Totales
+  const totPNS = Object.values(resumen).reduce((sum, r) => sum + r.PNS, 0);
+  const totPNI = Object.values(resumen).reduce((sum, r) => sum + r.PNI, 0);
   mensaje += `Total: ${String(totPNS).padStart(2,'0')} PNS y ${String(totPNI).padStart(2,'0')} PNI`;
 
-  // Abrir WhatsApp
+  // Envía a WhatsApp
   window.open(`https://wa.me/?text=${encodeURIComponent(mensaje)}`, '_blank');
 }
 
-// Arrancar
 document.addEventListener('DOMContentLoaded', init);
