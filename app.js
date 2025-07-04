@@ -63,62 +63,53 @@ function init() {
 }
 
 function enviarWhatsApp() {
-  // Formato fecha
   const hoy = new Date();
-  const fechaTxt = hoy.toLocaleDateString('es-CL', {
+  const fechaTexto = hoy.toLocaleDateString('es-CL', {
     day:'2-digit', month:'2-digit', year:'numeric'
   });
 
-  let mensaje = `Buenos días mi coronel, Sección Análisis Criminal: ${fechaTxt}\n`;
+  let mensaje = `Buenos días mi coronel, Sección Análisis Criminal: ${fechaTexto}\n`;
 
-  // Inicializar conteo por sección
+  // Inicializar contadores por sección y rol
   const resumen = {};
-  personal.forEach(p => {
-    if (!resumen[p.seccion]) resumen[p.seccion] = { PNS: 0, PNI: 0 };
+  personal.forEach(({ seccion, rol }) => {
+    if (!resumen[seccion]) resumen[seccion] = { PNS: 0, PNI: 0 };
   });
 
-  // Contar sólo los "si"
-  document.querySelectorAll(
-    '#asistencia input[type="checkbox"][data-tipo="si"]:checked'
-  ).forEach(cb => {
-    const persona = personal.find(p => p.nombre === cb.dataset.nombre);
-    if (persona) {
+  // Recorremos cada fila: si hay *cualquier* checkbox marcado, contamos
+  document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
+    const nombre = tr.cells[0].textContent;
+    const marcado = tr.querySelector('input[type="checkbox"]:checked');
+    if (marcado) {
+      // Buscamos la persona en nuestro array original
+      const persona = personal.find(p => p.nombre === nombre);
       resumen[persona.seccion][persona.rol]++;
     }
   });
 
-  // Líneas por sección
+  // Montar líneas por sección
   for (const seccion in resumen) {
     const { PNS, PNI } = resumen[seccion];
-    const partes = [];
-    if (PNS > 0) partes.push(`${String(PNS).padStart(2,'0')} PNS`);
-    if (PNI > 0) partes.push(`${String(PNI).padStart(2,'0')} PNI`);
-    mensaje += `* ${seccion}: ${partes.join(' - ')}\n`;
+    // Si ambos son cero, saltamos la sección
+    if (PNS === 0 && PNI === 0) continue;
+
+    mensaje += `* ${seccion}: `;
+
+    // mostrar "XX PNS" si PNS>0
+    if (PNS > 0) mensaje += `${String(PNS).padStart(2,'0')} PNS`;
+    if (PNS > 0 && PNI > 0) mensaje += ' y ';
+    // mostrar "YY PNI" si PNI>0
+    if (PNI > 0) mensaje += `${String(PNI).padStart(2,'0')} PNI`;
+
+    mensaje += '\n';
   }
 
-  // Totales correctos
-  const totPNS = Object.values(resumen).reduce((s, r) => s + r.PNS, 0);
-  const totPNI = Object.values(resumen).reduce((s, r) => s + r.PNI, 0);
+  // Totales generales
+  const totPNS = Object.values(resumen).reduce((sum, r) => sum + r.PNS, 0);
+  const totPNI = Object.values(resumen).reduce((sum, r) => sum + r.PNI, 0);
   mensaje += `Total: ${String(totPNS).padStart(2,'0')} PNS y ${String(totPNI).padStart(2,'0')} PNI`;
 
-  // Abrir WhatsApp
-  window.open(`https://wa.me/?text=${encodeURIComponent(mensaje)}`, '_blank');
+  // Abrimos WhatsApp
+  const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+  window.open(url, '_blank');
 }
-
-document.addEventListener('DOMContentLoaded', init);
-
-// PWA: instalar app manual
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const btn = document.getElementById('btn-install');
-  if (btn) {
-    btn.style.display = 'inline-block';
-    btn.onclick = () => {
-      btn.style.display = 'none';
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => deferredPrompt = null);
-    };
-  }
-});
