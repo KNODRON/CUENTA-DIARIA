@@ -28,71 +28,60 @@ const personal = [
 ];
 
 function init() {
-  // 1) Poner fecha
+  // 1) Mostrar fecha
   const fechaDiv = document.getElementById('fecha');
   const hoy = new Date();
   fechaDiv.textContent = hoy.toLocaleDateString('es-CL', {
     day: 'numeric', month: 'long', year: 'numeric'
   });
 
-  // 2) Generar filas de la tabla
+  // 2) Generar filas
   const tbody = document.querySelector('#asistencia tbody');
-  tbody.innerHTML = ''; // limpio antes
-
+  tbody.innerHTML = '';
   personal.forEach(({ nombre }) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${nombre}</td>
       ${['si','noche','franco','ad','lic','otro']
         .map(tipo =>
-          `<td>
-             <input 
-               type="checkbox"
-               data-nombre="${nombre}"
-               data-tipo="${tipo}"
-             >
-           </td>`
+          `<td><input type="checkbox" data-nombre="${nombre}" data-tipo="${tipo}"></td>`
         ).join('')}
     `;
-
-    // 3) Lógica: solo un checkbox marcado por fila
+    // sólo 1 marcado a la vez
     const checks = tr.querySelectorAll('input[type="checkbox"]');
     checks.forEach(cb =>
       cb.addEventListener('change', () => {
-        if (cb.checked) {
-          checks.forEach(o => {
-            if (o !== cb) o.checked = false;
-          });
-        }
+        if (!cb.checked) return;
+        checks.forEach(o => o !== cb && (o.checked = false));
       })
     );
-
     tbody.appendChild(tr);
   });
 
-  // 4) Enlazar botón de WhatsApp
+  // 3) Asignar envío a WhatsApp
   document.getElementById('enviarWhatsApp')
     .addEventListener('click', enviarWhatsApp);
 }
 
 function enviarWhatsApp() {
-  // Fecha corta dd-mm-yyyy
+  // Fecha en dd-mm-yyyy
   const hoy = new Date();
   const fechaTxt = hoy.toLocaleDateString('es-CL', {
     day:'2-digit', month:'2-digit', year:'numeric'
   });
 
-  // Encabezado del mensaje
+  // Cabecera del mensaje
   let mensaje = `Buenos días mi coronel, Sección Análisis Criminal: ${fechaTxt}\n`;
 
-  // Preparo resumen por sección
+  // Inicializar resumen por sección
   const resumen = {};
-  personal.forEach(({ seccion }) => {
-    if (!resumen[seccion]) resumen[seccion] = { PNS: 0, PNI: 0 };
+  personal.forEach(p => {
+    if (!resumen[p.seccion]) resumen[p.seccion] = { PNS: 0, PNI: 0 };
   });
 
-  // Sólo contamos los “si”
-  document.querySelectorAll('input[type="checkbox"][data-tipo="si"]:checked')
+  // Recojo sólo los checkboxes 'si' marcados
+  document
+    .querySelectorAll('#asistencia input[type="checkbox"][data-tipo="si"]:checked')
     .forEach(cb => {
       const nombre = cb.dataset.nombre;
       const persona = personal.find(p => p.nombre === nombre);
@@ -101,7 +90,7 @@ function enviarWhatsApp() {
       }
     });
 
-  // Armo líneas por sección
+  // Construir líneas por sección
   for (const seccion in resumen) {
     const { PNS, PNI } = resumen[seccion];
     const partes = [];
@@ -111,19 +100,17 @@ function enviarWhatsApp() {
   }
 
   // Totales generales
-  const totPNS = Object.values(resumen).reduce((sum, r) => sum + r.PNS, 0);
-  const totPNI = Object.values(resumen).reduce((sum, r) => sum + r.PNI, 0);
+  const totPNS = Object.values(resumen).reduce((a,v) => a + v.PNS, 0);
+  const totPNI = Object.values(resumen).reduce((a,v) => a + v.PNI, 0);
   mensaje += `Total: ${String(totPNS).padStart(2,'0')} PNS y PNI ${totPNS + totPNI}`;
 
-  // Envío a WhatsApp
-  const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
-  window.open(url, '_blank');
+  // Abrir WhatsApp
+  window.open(`https://wa.me/?text=${encodeURIComponent(mensaje)}`, '_blank');
 }
 
-// Iniciar
 document.addEventListener('DOMContentLoaded', init);
 
-// PWA: instalar app
+// PWA: beforeinstallprompt (instalación manual)
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
@@ -131,10 +118,10 @@ window.addEventListener('beforeinstallprompt', e => {
   const btn = document.getElementById('btn-install');
   if (btn) {
     btn.style.display = 'inline-block';
-    btn.addEventListener('click', () => {
+    btn.onclick = () => {
       btn.style.display = 'none';
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then(() => deferredPrompt = null);
-    });
+    };
   }
 });
