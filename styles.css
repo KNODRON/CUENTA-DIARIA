@@ -2,31 +2,36 @@
   VARIABLES DE COLOR
 ────────────────────────────────────────*/
 :root {
-  --text: #ffffff;
-  --header-bg: rgba(0, 0, 0, 0.5);  /* más oscuro para el encabezado sticky */
-  --row-alt: rgba(0, 0, 0, 0.2);     /* fila alternada */
-  --accent: #1976d2;
-  --shadow: rgba(0, 0, 0, 0.2);
+  --bg: transparent;           /* fondo transparente para que se vea la imagen */
+  --text: #ffffff;             /* texto blanco */
+  --header-bg: rgba(0,0,0,0.4); /* cabecera semi-oscura */
+  --row-alt: rgba(0,0,0,0.2);   /* filas pares semi-oscuro */
+  --accent: #1976d2;           /* azul de tiqueado */
+  --shadow: rgba(0, 0, 0, 0.2); /* sombra */
 }
 
 /*────────────────────────────────────────
-  RESET Y BODY CON IMAGEN DE FONDO
+  RESET & BODY
 ────────────────────────────────────────*/
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
+
 body {
+  background:
+    /* overlay semitransparente */
+    linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+    url('./bg.jpeg') no-repeat center center fixed;
+  background-size: cover;
+  color: var(--text);
   font-family: system-ui, sans-serif;
   line-height: 1.3;
-  color: var(--text);
-  background: url('./bg.jpeg') no-repeat center center fixed;
-  background-size: cover;
 }
 
 /*────────────────────────────────────────
-  HEADER Y FECHA (transparente)
+  HEADER Y FECHA
 ────────────────────────────────────────*/
 header {
   text-align: center;
@@ -50,11 +55,11 @@ header h1 {
   CONTENEDOR SCROLLABLE
 ────────────────────────────────────────*/
 .scrollable {
+  position: relative;
   max-height: calc(100vh - 7.5rem);
   overflow-y: auto;
   overflow-x: hidden;
   margin: 0 0.5rem 1rem;
-  /* fondo semitransparente para destacar */
   background: rgba(0,0,0,0.3);
   border-radius: 6px;
   box-shadow: 0 3px 8px var(--shadow);
@@ -62,41 +67,61 @@ header h1 {
 }
 
 /*────────────────────────────────────────
-  TABLA (totalmente transparente)
+  TABLA COMPACTA
 ────────────────────────────────────────*/
 #asistencia {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
 }
+
+/* Sticky header */
 #asistencia thead th {
   position: sticky;
   top: 0;
   background: var(--header-bg);
-  padding: 0.3rem 0.5rem;
+  padding: 0.25rem 0.35rem;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  color: var(--text);
-  border-bottom: 1px solid rgba(255,255,255,0.3);
   z-index: 5;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
 }
+
+/* Celdas compactas */
 #asistencia th,
 #asistencia td {
-  padding: 0.4rem 0.6rem;
+  padding: 0.3rem 0.4rem;
   font-size: 0.75rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
   background: transparent;
   color: var(--text);
-  border-bottom: 1px solid rgba(255,255,255,0.3);
 }
+
+/* Alternar color de filas */
 #asistencia tbody tr:nth-child(even) {
-  background: var(--row-alt);
+  background: rgba(0,0,0,0.2);
 }
 #asistencia tbody tr:hover {
   background: rgba(255,255,255,0.1);
+}
+
+/*────────────────────────────────────────
+  AJUSTE DE ANCHOS DE COLUMNA
+────────────────────────────────────────*/
+/* 1) Primera columna (nombres) más ancha */
+#asistencia th:nth-child(1),
+#asistencia td:nth-child(1) {
+  width: 40%;
+}
+
+/* 2) El resto (casilleros) más estrechas */
+#asistencia th:nth-child(n+2):nth-child(-n+7),
+#asistencia td:nth-child(n+2):nth-child(-n+7) {
+  width: calc(60% / 6); /* 6 columnas reparten el 60% restante */
 }
 
 /*────────────────────────────────────────
@@ -119,7 +144,8 @@ input[type="checkbox"] {
   justify-content: flex-end;
   margin: 0 0.5rem 1rem;
 }
-#enviarWhatsApp {
+#enviarWhatsApp,
+#btn-install {
   padding: 0.5rem 1rem;
   background: var(--accent);
   color: #fff;
@@ -129,23 +155,26 @@ input[type="checkbox"] {
   cursor: pointer;
   font-size: 0.85rem;
   transition: background 0.3s, transform 0.2s;
+  margin-left: 0.5rem;
 }
-#enviarWhatsApp:hover {
+#enviarWhatsApp:hover,
+#btn-install:hover {
   background: #1565c0;
   transform: translateY(-1px);
 }
 
 /*────────────────────────────────────────
-  RESPONSIVE MÓVIL
+  RESPONSIVE (móvil)
 ────────────────────────────────────────*/
 @media (max-width: 600px) {
   #asistencia thead th,
   #asistencia th,
   #asistencia td {
-    padding: 0.2rem 0.4rem;
+    padding: 0.2rem 0.3rem;
     font-size: 0.7rem;
   }
-  #enviarWhatsApp {
+  #enviarWhatsApp,
+  #btn-install {
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
   }
