@@ -1,11 +1,11 @@
 {
   "name":             "SECCIÓN ANÁLISIS CRIMINAL",
-  "short_name":       "Analisis",
-  "start_url":        "/CUENTA-DIARIA/index.html",
-  "scope":            "/CUENTA-DIARIA/",
+  "short_name":       "Analísis",
+  "start_url":        "./",            /* → abre index.html en esta carpeta */
+  "scope":            "./",            /* → todas las rutas dentro de esta carpeta */
   "display":          "standalone",
-  "theme_color":      "#4caf50",
   "background_color": "#ffffff",
+  "theme_color":      "#4caf50",
   "icons": [
     {
       "src":   "icon-192.png",
