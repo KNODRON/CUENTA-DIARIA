@@ -1,23 +1,33 @@
+/*────────────────────────────────────────
+  VARIABLES DE COLOR
+────────────────────────────────────────*/
 :root {
-  --bg-img: url('bg.jpeg');
   --text: #ffffff;
-  --header-bg: rgba(0,0,0,0.4);
-  --row-alt: rgba(0,0,0,0.2);
+  --header-bg: rgba(0, 0, 0, 0.5);  /* más oscuro para el encabezado sticky */
+  --row-alt: rgba(0, 0, 0, 0.2);     /* fila alternada */
   --accent: #1976d2;
-  --shadow: rgba(0,0,0,0.2);
+  --shadow: rgba(0, 0, 0, 0.2);
 }
 
-/* Reset / Body */
-* { box-sizing: border-box; margin:0; padding:0; }
+/*────────────────────────────────────────
+  RESET Y BODY CON IMAGEN DE FONDO
+────────────────────────────────────────*/
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 body {
-  background: var(--bg-img) no-repeat center center fixed;
-  background-size: cover;
-  color: var(--text);
   font-family: system-ui, sans-serif;
   line-height: 1.3;
+  color: var(--text);
+  background: url('./bg.jpeg') no-repeat center center fixed;
+  background-size: cover;
 }
 
-/* Header y fecha */
+/*────────────────────────────────────────
+  HEADER Y FECHA (transparente)
+────────────────────────────────────────*/
 header {
   text-align: center;
   padding: 1.5rem 1rem 0.5rem;
@@ -26,28 +36,34 @@ header {
 header h1 {
   font-size: 1.8rem;
   letter-spacing: 1px;
+  margin-bottom: 0.25rem;
   text-shadow: 0 1px 3px rgba(0,0,0,0.7);
 }
 #fecha {
   font-size: 0.85rem;
   color: rgba(255,255,255,0.8);
-  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
   text-shadow: 0 1px 2px rgba(0,0,0,0.6);
 }
 
-/* Scrollable container */
+/*────────────────────────────────────────
+  CONTENEDOR SCROLLABLE
+────────────────────────────────────────*/
 .scrollable {
   max-height: calc(100vh - 7.5rem);
   overflow-y: auto;
   overflow-x: hidden;
   margin: 0 0.5rem 1rem;
+  /* fondo semitransparente para destacar */
   background: rgba(0,0,0,0.3);
   border-radius: 6px;
   box-shadow: 0 3px 8px var(--shadow);
   padding-top: 0.5rem;
 }
 
-/* Tabla compacta */
+/*────────────────────────────────────────
+  TABLA (totalmente transparente)
+────────────────────────────────────────*/
 #asistencia {
   width: 100%;
   table-layout: fixed;
@@ -57,26 +73,24 @@ header h1 {
   position: sticky;
   top: 0;
   background: var(--header-bg);
-  padding: 0.25rem 0.35rem;
+  padding: 0.3rem 0.5rem;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  z-index: 5;
+  color: var(--text);
   border-bottom: 1px solid rgba(255,255,255,0.3);
+  z-index: 5;
 }
 #asistencia th,
 #asistencia td {
-  padding: 0.3rem 0.4rem;
+  padding: 0.4rem 0.6rem;
   font-size: 0.75rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-bottom: 1px solid rgba(255,255,255,0.3);
   background: transparent;
-}
-#asistencia th:first-child,
-#asistencia td:first-child {
-  text-align: left;
+  color: var(--text);
+  border-bottom: 1px solid rgba(255,255,255,0.3);
 }
 #asistencia tbody tr:nth-child(even) {
   background: var(--row-alt);
@@ -85,7 +99,9 @@ header h1 {
   background: rgba(255,255,255,0.1);
 }
 
-/* Casillas compactas */
+/*────────────────────────────────────────
+  CASILLAS COMPACTAS
+────────────────────────────────────────*/
 input[type="checkbox"] {
   width: 0.9rem;
   height: 0.9rem;
@@ -95,13 +111,14 @@ input[type="checkbox"] {
   border-radius: 2px;
 }
 
-/* Botones */
+/*────────────────────────────────────────
+  BOTÓN WHATSAPP
+────────────────────────────────────────*/
 .acciones {
   display: flex;
   justify-content: flex-end;
   margin: 0 0.5rem 1rem;
 }
-#btn-install,
 #enviarWhatsApp {
   padding: 0.5rem 1rem;
   background: var(--accent);
@@ -112,23 +129,22 @@ input[type="checkbox"] {
   cursor: pointer;
   font-size: 0.85rem;
   transition: background 0.3s, transform 0.2s;
-  margin-left: 0.5rem;
 }
-#btn-install:hover,
 #enviarWhatsApp:hover {
   background: #1565c0;
   transform: translateY(-1px);
 }
 
-/* Responsive móvil */
+/*────────────────────────────────────────
+  RESPONSIVE MÓVIL
+────────────────────────────────────────*/
 @media (max-width: 600px) {
   #asistencia thead th,
   #asistencia th,
   #asistencia td {
-    padding: 0.2rem 0.3rem;
+    padding: 0.2rem 0.4rem;
     font-size: 0.7rem;
   }
-  #btn-install,
   #enviarWhatsApp {
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
