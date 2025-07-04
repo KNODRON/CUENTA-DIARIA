@@ -25,58 +25,31 @@ const personal = [
   { nombre: 'C1 Pacheco P',       seccion: 'Monitoreo',           rol: 'PNI' }
 ];
 
-// Etiquetas de columnas (orden exacto)
-const labels = ['Si', 'Noche', 'Franco', 'Ad.', 'Lic.', 'Otro'];
-
 function init() {
-  // Mostrar fecha
+  // Fecha en formato largo español
   const fechaDiv = document.getElementById('fecha');
   const hoy = new Date();
   fechaDiv.textContent = hoy.toLocaleDateString('es-CL', {
-    day: 'numeric', month: 'numeric', year: 'numeric'
+    day: 'numeric', month: 'long', year: 'numeric'
   });
 
   const tbody = document.querySelector('#asistencia tbody');
-  let currentSection = null;
+  tbody.innerHTML = '';
 
-  // Generar filas y secciones
-  personal.forEach(person => {
-    if (person.seccion !== currentSection) {
-      currentSection = person.seccion;
-      const secRow = document.createElement('tr');
-      const secCell = document.createElement('th');
-      secCell.textContent = currentSection.toUpperCase();
-      secCell.colSpan = 1 + labels.length;
-      secRow.appendChild(secCell);
-      tbody.appendChild(secRow);
-    }
-
+  personal.forEach(({ nombre }) => {
     const tr = document.createElement('tr');
     // Nombre
-    const tdName = document.createElement('td');
-    tdName.textContent = person.nombre;
-    tr.appendChild(tdName);
+    tr.innerHTML = `<td>${nombre}</td>` +
+      ['si','noche','franco','ad','lic','otro']
+        .map(tipo => `<td><input type="checkbox" data-nombre="${nombre}" data-tipo="${tipo}"></td>`)
+        .join('');
 
-    // Casillas
-    labels.forEach(label => {
-      const td = document.createElement('td');
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.dataset.label = label;
-      cb.dataset.seccion = person.seccion;
-      cb.dataset.rol = person.rol;
-      td.appendChild(cb);
-      tr.appendChild(td);
-    });
-
-    // Sólo 1 casilla marcada por fila
+    // Lógica: solo 1 checkbox por fila
     const checks = tr.querySelectorAll('input[type="checkbox"]');
     checks.forEach(cb => {
       cb.addEventListener('change', () => {
         if (cb.checked) {
-          checks.forEach(other => {
-            if (other !== cb) other.checked = false;
-          });
+          checks.forEach(o => o !== cb && (o.checked = false));
         }
       });
     });
@@ -89,63 +62,60 @@ function init() {
     .addEventListener('click', enviarWhatsApp);
 }
 
-function generarResumen() {
-  // Inicializa conteo
+function enviarWhatsApp() {
+  const hoy = new Date();
+  const fechaTexto = hoy.toLocaleDateString('es-CL', { day:'2-digit', month:'2-digit', year:'numeric' });
+  let mensaje = `Buenos días mi coronel, Sección Análisis Criminal: ${fechaTexto}\n`;
+
+  // Contadores por sección
   const resumen = {};
-  personal.forEach(p => {
-    if (!resumen[p.seccion]) resumen[p.seccion] = { PNS: 0, PNI: 0 };
+  personal.forEach(({ seccion, rol }) => {
+    resumen[seccion] = resumen[seccion] || { PNS:0, PNI:0 };
   });
 
-  // Cuenta sólo 'Si'
-  document
-    .querySelectorAll('input[data-label="Si"]:checked')
-    .forEach(cb => {
-      resumen[cb.dataset.seccion][cb.dataset.rol]++;
-    });
+  document.querySelectorAll('#asistencia tbody tr').forEach(tr => {
+    const nombre = tr.cells[0].textContent;
+    const tipo = tr.querySelector('input:checked')?.dataset.tipo;
+    if (tipo) {
+      const persona = personal.find(p => p.nombre === nombre);
+      resumen[persona.seccion][persona.rol]++;
+    }
+  });
 
-  // Construir mensaje
-  const fecha = document.getElementById('fecha').textContent;
-  let texto = `Buenos días mi Coronel, Sección Análisis Criminal: ${fecha}\n`;
-
-  for (const sec of Object.keys(resumen)) {
-    const { PNS, PNI } = resumen[sec];
-    const partes = [];
-    if (PNS) partes.push(String(PNS).padStart(2, '0') + ' PNS');
-    if (PNI) partes.push(String(PNI).padStart(2, '0') + ' PNI');
-    texto += `* ${sec}: ${partes.join(' - ') || '00 PNS'}\n`;
+  // Montar líneas
+  for (const seccion in resumen) {
+    const { PNS, PNI } = resumen[seccion];
+    mensaje += `* ${seccion}: ` +
+      (PNS>0 ? `${String(PNS).padStart(2,'0')} PNS` : '') +
+      (PNS>0 && PNI>0 ? ' – ' : '') +
+      (PNI>0 ? `${String(PNI).padStart(2,'0')} PNI` : '') +
+      '\n';
   }
 
-  const totalPNS = Object.values(resumen).reduce((sum, v) => sum + v.PNS, 0);
-  const totalPNI = Object.values(resumen).reduce((sum, v) => sum + v.PNI, 0);
-  texto += `Total: ${String(totalPNS).padStart(2, '0')} PNS y PNI ${totalPNI}`;
+  // Totales
+  const totPNS = Object.values(resumen).reduce((s,r)=> s+r.PNS,0);
+  const totPNI = Object.values(resumen).reduce((s,r)=> s+r.PNI,0);
+  mensaje += `Total: ${String(totPNS).padStart(2,'0')} PNS y PNI ${totPNS+totPNI}`;
 
-  return texto;
+  // Abrir WhatsApp
+  const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+  window.open(url, '_blank');
 }
 
-function enviarWhatsApp() {
-  const mensaje = encodeURIComponent(generarResumen());
-  window.open(`https://wa.me/?text=${mensaje}`, '_blank');
-}
-
+// Inicia al cargar
 document.addEventListener('DOMContentLoaded', init);
 
+// PWA: beforeinstallprompt
 let deferredPrompt;
-
 window.addEventListener('beforeinstallprompt', e => {
-  // Evita el banner automático de Chrome
   e.preventDefault();
   deferredPrompt = e;
-  // Muestra tu botón de instalación
   const btn = document.getElementById('btn-install');
   btn.style.display = 'inline-block';
 
   btn.addEventListener('click', () => {
-    // Lanza el prompt nativo
+    btn.style.display = 'none';
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(choiceResult => {
-      // Puedes chequear choiceResult.outcome ('accepted' o 'dismissed')
-      deferredPrompt = null;
-      btn.style.display = 'none'; // ocultar botón si ya respondió
-    });
+    deferredPrompt.userChoice.then(() => deferredPrompt = null);
   });
 });
