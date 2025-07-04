@@ -1,7 +1,7 @@
 // sw.js
 
 // 1) Cambiamos el nombre del caché para forzar recarga
-const CACHE_NAME = 'pwa-asistencia-v2';
+const CACHE_NAME = 'pwa-asistencia-v3';
 
 // 2) Listamos TODO lo que queremos cachear, incluyendo bg.jpg en raíz
 const urlsToCache = [
